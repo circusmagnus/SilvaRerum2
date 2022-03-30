@@ -7,16 +7,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import pl.allegro.android.buyers.common.util.events.EventQueue
+import pl.allegro.android.buyers.common.util.events.SharedEvents
 import java.util.UUID
 
 class Notes() {
 
-    private val state = MutableStateFlow(emptyList<NoteSnapshot>())
+    private val state = MutableStateFlow(listOf(NoteSnapshot(id = NoteId("a"), Timestamp(System.currentTimeMillis()), content = "Ala ma kota")))
 
     val all: StateFlow<List<NoteSnapshot>>
         get() = state
 
-    private val eventQueue = EventQueue<>
+    private val eventQueue = EventQueue<NavigationEvent>(64)
+    val events: SharedEvents<NavigationEvent>
+        get() = eventQueue
 
     fun add(newContent: String = "") {
         val timestamp = Timestamp(System.currentTimeMillis())
@@ -37,6 +40,10 @@ class Notes() {
             notes.filter { it.id != note.id }
         }
     }
+
+    fun noteClicked(id: NoteId) {
+        eventQueue.tryPush(NavigationEvent.NoteClicked(id))
+    }
 }
 
 fun List<NoteSnapshot>.mapMatching(id: NoteId, transform: (NoteSnapshot) -> NoteSnapshot) = map { note ->
@@ -56,7 +63,8 @@ value class NoteId(val value: String)
 value class Timestamp(val value: Long)
 
 sealed class NavigationEvent {
-    class NoteClicked(noteId: NoteId): NavigationEvent()
+    class NoteClicked(val noteId: NoteId) : NavigationEvent()
     object AddNoteClicked : NavigationEvent()
-    class EditNoteClicked
+    class EditNoteClicked(val id: NoteId) : NavigationEvent()
+    object ShowList : NavigationEvent()
 }

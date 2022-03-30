@@ -11,24 +11,44 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
 import pl.wojtach.silvarerum2.ui.theme.Typography
+import androidx.compose.runtime.getValue
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val notes = Notes()
         setContent {
             SilvaRerum2Theme {
+                val navigationEvent by notes.events.getFor(TAG).collectAsState(initial = NavigationEvent.ShowList)
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    ReadOnlyNote(title = "Tytuł", content = "Ala ma kota")
+                    ShowNotes(notes = notes, event = navigationEvent)
                 }
             }
         }
     }
+
+    @Composable
+    private fun ShowNotes(notes: Notes, event: NavigationEvent) {
+        when(event) {
+            NavigationEvent.ShowList -> NoteListScreen(notes = notes)
+            is NavigationEvent.NoteClicked -> ReadOnlyNoteScreen(noteId = event.noteId, notes = notes)
+            else -> throw NotImplementedError()
+        }
+    }
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
 }
+
+
 
 @Composable
 fun EditNote(title: String, content: String){
