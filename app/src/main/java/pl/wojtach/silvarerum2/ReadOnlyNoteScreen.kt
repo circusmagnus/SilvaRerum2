@@ -11,14 +11,10 @@ import androidx.compose.runtime.setValue
 @Composable
 fun ReadOnlyNoteScreen(noteId: NoteId, notes: Notes) {
     val note by notes.get(noteId).collectAsState(initial = null)
-    val title = note?.content?.takeWhile { char -> char != ' ' } ?: ""
-    ReadOnlyNote(title = title, content = note?.content ?: "")
+    ReadOnlyNote(content = note?.content ?: "")
 }
 
 @Composable
-fun ReadOnlyNote(title: String, content: String){
-    Column {
-        Text(style = Typography.h5, text = title)
-        Text(text = content)
-    }
+fun ReadOnlyNote(content: String) {
+    Text(text = content)
 }

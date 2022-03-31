@@ -17,15 +17,15 @@ class Notes() {
     val all: StateFlow<List<NoteSnapshot>>
         get() = state
 
-    private val eventQueue = EventQueue<NavigationEvent>(64)
-    val events: SharedEvents<NavigationEvent>
+    private val eventQueue = EventQueue<NavDestination>(64)
+    val events: SharedEvents<NavDestination>
         get() = eventQueue
 
     fun add(newContent: String = "") {
         val timestamp = Timestamp(System.currentTimeMillis())
         val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), timestamp, newContent)
         state.update { notes -> notes + newNote }
-        eventQueue.tryPush(NavigationEvent.AddNoteClicked)
+        eventQueue.tryPush(NavDestination.EditNote(newNote.id))
     }
 
     fun get(id: NoteId): Flow<NoteSnapshot?> = all.map { notes -> notes.firstOrNull { it.id == id } }
@@ -43,7 +43,7 @@ class Notes() {
     }
 
     fun noteClicked(id: NoteId) {
-        eventQueue.tryPush(NavigationEvent.NoteClicked(id))
+        eventQueue.tryPush(NavDestination.ReadNote(id))
     }
 }
 
