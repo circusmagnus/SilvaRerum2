@@ -36,6 +36,10 @@ class Notes() {
         }
     }
 
+    fun edit(note: NoteSnapshot) {
+        eventQueue.tryPush(NavDestination.EditNote(note.id))
+    }
+
     fun delete(note: NoteSnapshot) {
         state.update { notes ->
             notes.filter { it.id != note.id }
