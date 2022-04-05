@@ -94,8 +94,6 @@ fun ShortNote(
     onClick: () -> Unit,
     DeleteButton: @Composable () -> Unit,
     EditButton: @Composable () -> Unit
-//    onEditClicked: (note: NoteSnapshot) -> Unit,
-//    onDeleteClicked: (note: NoteSnapshot) -> Unit
 ) {
     Card(border = BorderStroke(1.dp, color = Color.Black)) {
         Row(Modifier.clickable { onClick() }) {
