@@ -24,8 +24,8 @@ class Notes() {
     fun add(newContent: String = "") {
         val timestamp = Timestamp(System.currentTimeMillis())
         val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), timestamp, newContent)
-        state.update { notes -> notes + newNote }
         eventQueue.tryPush(NavDestination.EditNote(newNote.id))
+        state.update { notes -> notes + newNote }
     }
 
     fun get(id: NoteId): Flow<NoteSnapshot?> = all.map { notes -> notes.firstOrNull { it.id == id } }

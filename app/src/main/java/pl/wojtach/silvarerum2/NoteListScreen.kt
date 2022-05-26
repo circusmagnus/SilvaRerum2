@@ -1,5 +1,7 @@
 package pl.wojtach.silvarerum2
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -18,17 +20,43 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.isActive
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun NoteListScreen(notes: Notes) {
     val noteListData by notes.all.collectAsState()
+
+    Log.d("lw", "NoteListScreen composed")
+
     NoteListLayout(
         topBar = { TopAppBar { Text(modifier = Modifier.padding(8.dp), text = "Silva Rerum") } },
         noteListUi = {
@@ -36,7 +64,7 @@ fun NoteListScreen(notes: Notes) {
                 ShortNote(
                     note = note,
                     onClick = { notes.noteClicked(note.id) },
-                    DeleteButton = { DeleteNoteButton { notes.delete(note)} },
+                    DeleteButton = { DeleteNoteButton { notes.delete(note) } },
                     EditButton = { EditNoteButton { notes.edit(note) } })
             })
         },
@@ -44,8 +72,23 @@ fun NoteListScreen(notes: Notes) {
     )
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun <T> StateFlow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner): State<T> = produceState(
+    initialValue = value,
+    key1 = lifecycleOwner,
+    producer = {
+        flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { Log.d("lw", "collecting state while started. State: $it") }
+            .collect { value = it }
+    }
+)
+
 @Composable
 fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable () -> Unit, floatingButton: @Composable () -> Unit) {
+
+    Log.d("lw", "NoteListLayout composed")
+
     Scaffold(
         topBar = topBar,
         floatingActionButton = floatingButton,
@@ -79,6 +122,9 @@ fun EditNoteButton(onClick: () -> Unit = {}) {
 
 @Composable
 fun NoteList(noteList: List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteSnapshot) -> Unit) {
+
+    Log.d("lw", "NoteList composed")
+
     LazyColumn {
         items(
             noteList,
@@ -97,7 +143,11 @@ fun ShortNote(
 ) {
     Card(border = BorderStroke(1.dp, color = Color.Black)) {
         Row(Modifier.clickable { onClick() }) {
-            Text(text = note.content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier.padding(8.dp).weight(4f, true))
+            Text(
+                text = note.content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier
+                    .padding(8.dp)
+                    .weight(4f, true)
+            )
             Row(modifier = Modifier.weight(1f, false)) {
                 DeleteButton()
                 EditButton()

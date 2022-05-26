@@ -1,6 +1,7 @@
 package pl.wojtach.silvarerum2
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,8 @@ class MainActivity : ComponentActivity() {
     private fun MainScreen() {
         val notes = remember { Notes() }
         val navController = rememberNavController()
+
+        Log.d("lw", "MainScreen composed")
         
         LaunchedEffect(key1 = "navigation") {
             notes.events.getFor("MainScreen")
