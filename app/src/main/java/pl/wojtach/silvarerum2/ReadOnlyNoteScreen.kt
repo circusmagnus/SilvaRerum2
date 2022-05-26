@@ -1,6 +1,5 @@
 package pl.wojtach.silvarerum2
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -9,11 +8,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import pl.wojtach.silvarerum2.ui.theme.Typography
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import pl.wojtach.silvarerum2.widgets.EditNoteButton
 
 @Composable
 fun ReadOnlyNoteScreen(noteId: NoteId, notes: Notes) {
