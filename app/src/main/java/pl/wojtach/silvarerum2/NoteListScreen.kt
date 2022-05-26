@@ -27,9 +27,9 @@ fun NoteListScreen(notes: Notes) {
     NoteListLayout(
         topBar = { TopAppBar { Text(modifier = Modifier.padding(8.dp), text = "Silva Rerum") } },
         noteListUi = {
-            NoteList(noteList = noteListData, ShortNoteCellFact = { note ->
+            NoteList(noteList = { noteListData }, ShortNoteCellFact = { note ->
                 ShortNote(
-                    note = note,
+                    note = { note },
                     onClick = { notes.noteClicked(note.noteId) },
                     DeleteButton = { DeleteNoteButton { notes.delete(note) } },
                     EditButton = { EditNoteButton { notes.edit(note) } })

@@ -51,13 +51,13 @@ fun EditNoteButton(onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun NoteList(noteList: List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteSnapshot) -> Unit) {
+fun NoteList(noteList: () -> List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteSnapshot) -> Unit) {
 
     Log.d("lw", "NoteList composed")
 
     LazyColumn {
         items(
-            noteList,
+            noteList(),
             { note -> note.noteId.value },
             { note -> ShortNoteCellFact(note) }
         )
@@ -66,15 +66,17 @@ fun NoteList(noteList: List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteS
 
 @Composable
 fun ShortNote(
-    note: NoteSnapshot = NoteSnapshot(NoteId("a"), Timestamp(System.currentTimeMillis()), "Ala ma kota"),
+    note: () -> NoteSnapshot = { NoteSnapshot(NoteId("a"), Timestamp(System.currentTimeMillis()), "Ala ma kota") },
     onClick: () -> Unit,
     DeleteButton: @Composable () -> Unit,
     EditButton: @Composable () -> Unit
 ) {
+    Log.d("lw", "Short Note Cell composed")
+
     Card(border = BorderStroke(1.dp, color = Color.Black)) {
         Row(Modifier.clickable { onClick() }) {
             Text(
-                text = note.content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier
+                text = note().content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier
                     .padding(8.dp)
                     .weight(4f, true)
             )

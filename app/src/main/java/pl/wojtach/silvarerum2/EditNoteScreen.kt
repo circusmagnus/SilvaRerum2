@@ -15,12 +15,12 @@ fun EditNoteScreen(notes: Notes, noteId: NoteId) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val note: NoteSnapshot? by notes.get(noteId).collectWhileStarted(lifecycleOwner, initialValue = null)
-    EditNote(content = note?.content ?: "", onValueChange = { newContent -> note?.let { notes.update(it, newContent) } })
+    EditNote(content = { note?.content ?: "" }, onValueChange = { newContent -> note?.let { notes.update(it, newContent) } })
 }
 
 @Composable
-fun EditNote(content: String, onValueChange: (newContent: String) -> Unit) {
+fun EditNote(content: () -> String, onValueChange: (newContent: String) -> Unit) {
     Log.d("lw", "EditNote composed")
 
-    TextField(value = content, onValueChange = onValueChange, label = { Text("Treść") })
+    TextField(value = content(), onValueChange = onValueChange, label = { Text("Treść") })
 }

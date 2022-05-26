@@ -20,6 +20,7 @@ import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
 import pl.wojtach.silvarerum2.ui.theme.Typography
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -39,12 +40,13 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainScreen() {
-        val notes = remember { Notes() }
+        val scope = rememberCoroutineScope()
+        val notes = remember(key1 = scope) { Notes(scope) }
         val navController = rememberNavController()
 
         Log.d("lw", "MainScreen composed")
         
-        LaunchedEffect(key1 = "navigation") {
+        LaunchedEffect(key1 = notes, key2 = navController) {
             notes.events.getFor("MainScreen")
                 .onEach { dest -> navController.navigate(dest.uri) }
                 .launchIn(this)
