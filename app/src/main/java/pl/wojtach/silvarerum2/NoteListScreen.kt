@@ -7,6 +7,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,13 @@ import pl.wojtach.silvarerum2.widgets.ShortNote
 fun NoteListScreen(notes: Notes) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val noteListData by notes.all.collectWhileStarted(lifecycleOwner = lifecycleOwner)
+    val scope = rememberCoroutineScope()
+    val addNoteClicks = remember(key1 = scope, key2 = notes) {
+        ThrottledConsumer<String>(scope, 500) { newNoteContent -> notes.add(newNoteContent) }
+    }
+    val editNoteClicks = remember(key1 = scope, key2 = notes) {
+        ThrottledConsumer<NoteSnapshot>(scope, 500) { note -> notes.edit(note) }
+    }
 
     Log.d("lw", "NoteListScreen composed")
 
@@ -32,10 +41,10 @@ fun NoteListScreen(notes: Notes) {
                     note = { note },
                     onClick = { notes.noteClicked(note.noteId) },
                     DeleteButton = { DeleteNoteButton { notes.delete(note) } },
-                    EditButton = { EditNoteButton { notes.edit(note) } })
+                    EditButton = { EditNoteButton { editNoteClicks.send(note) } })
             })
         },
-        floatingButton = { AddNoteButton { notes.add("") } }
+        floatingButton = { AddNoteButton { addNoteClicks.send("") } }
     )
 }
 

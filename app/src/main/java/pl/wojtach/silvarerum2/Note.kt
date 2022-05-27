@@ -29,26 +29,11 @@ class Notes(scope: CoroutineScope): CoroutineScope by scope {
     val events: SharedEvents<NavDestination>
         get() = eventQueue
 
-    private val addQueue = ClicksConsumer<String>(timeoutMs = 500) { addInput ->
-        val timestamp = Timestamp(System.currentTimeMillis())
-        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), timestamp, addInput)
-        eventQueue.tryPush(NavDestination.EditNote(newNote.noteId))
-        state.update { notes -> notes + newNote }
-    }
-
-    fun <T> CoroutineScope.ClicksConsumer(timeoutMs: Long, consumeClick: (T) -> Unit, ): SendChannel<T> =
-        Channel<T>(capacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST).apply {
-        launch {
-            consumeEach { content ->
-                consumeClick(content)
-                delay(timeoutMs)
-                tryReceive() // throw away possible last value, which was sent during timeout
-            }
-        }
-    }
-
     fun add(newContent: String = "") {
-        addQueue.trySend(newContent)
+        val timestamp = Timestamp(System.currentTimeMillis())
+        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), timestamp, newContent)
+        state.update { notes -> notes + newNote }
+        eventQueue.tryPush(NavDestination.EditNote(newNote.noteId))
     }
 
     fun get(id: NoteId): Flow<NoteSnapshot?> = all.map { notes -> notes.firstOrNull { it.noteId == id } }
@@ -59,12 +44,8 @@ class Notes(scope: CoroutineScope): CoroutineScope by scope {
         }
     }
 
-    private val editClicks = ClicksConsumer<NoteSnapshot>(timeoutMs = 500) { note ->
-        eventQueue.tryPush(NavDestination.EditNote(note.noteId))
-    }
-
     fun edit(note: NoteSnapshot) {
-        editClicks.trySend(note)
+        eventQueue.tryPush(NavDestination.EditNote(note.noteId))
     }
 
     fun delete(note: NoteSnapshot) {
