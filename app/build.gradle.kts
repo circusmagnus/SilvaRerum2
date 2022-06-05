@@ -1,6 +1,10 @@
+import org.jetbrains.kotlin.kapt3.base.Kapt.kapt
+
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
+//    id ("com.google.devtools.ksp") version "$1.6.10-1.0.2"
+    kotlin("kapt")
 }
 
 val composeVersion = "1.1.1"
@@ -18,6 +22,16 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                    "room.schemaLocation" to "$projectDir/schemas",
+                    "room.incremental" to "true",
+                    "room.expandProjection" to "true"
+                )
+            }
         }
     }
 
@@ -49,7 +63,7 @@ android {
 
 dependencies {
 
-    implementation ("androidx.core:core-ktx:1.7.0")
+    implementation ("androidx.core:core-ktx:1.8.0")
     implementation ("androidx.compose.ui:ui:$composeVersion")
     implementation ("androidx.compose.material:material:$composeVersion")
     implementation ("androidx.compose.ui:ui-tooling-preview:$composeVersion")
@@ -64,8 +78,9 @@ dependencies {
     val room_version = "2.4.2"
     implementation ("androidx.room:room-runtime:$room_version")
     annotationProcessor ("androidx.room:room-compiler:$room_version")
-//    ksp ("androidx.room:room-compiler:$roomVersion")
-//    implementation ("androidx.room:room-ktx:$roomVersion")
+    kapt("androidx.room:room-compiler:$room_version")
+//    ksp ("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
