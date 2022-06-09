@@ -1,20 +1,13 @@
 package pl.wojtach.silvarerum2
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import pl.allegro.android.buyers.common.util.events.EventQueue
 import pl.allegro.android.buyers.common.util.events.SharedEvents
-import pl.wojtach.silvarerum2.utils.HasStableId
 import pl.wojtach.silvarerum2.utils.updateSelected
 import java.util.UUID
 
@@ -57,26 +50,4 @@ class Notes(scope: CoroutineScope): CoroutineScope by scope {
     fun noteClicked(id: NoteId) {
         eventQueue.tryPush(NavDestination.ReadNote(id))
     }
-}
-
-data class NoteSnapshot(
-    val noteId: NoteId,
-    val created: Timestamp,
-    val content: String
-): HasStableId {
-    override val id: String
-        get() = noteId.value
-}
-
-@JvmInline
-value class NoteId(val value: String)
-
-@JvmInline
-value class Timestamp(val value: Long)
-
-sealed class NavigationEvent {
-    class NoteClicked(val noteId: NoteId) : NavigationEvent()
-    object AddNoteClicked : NavigationEvent()
-    class EditNoteClicked(val id: NoteId) : NavigationEvent()
-    object ShowList : NavigationEvent()
 }
