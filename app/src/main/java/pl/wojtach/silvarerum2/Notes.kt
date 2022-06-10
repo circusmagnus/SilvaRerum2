@@ -4,16 +4,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import pl.allegro.android.buyers.common.util.events.EventQueue
 import pl.allegro.android.buyers.common.util.events.SharedEvents
+import pl.wojtach.silvarerum2.room.NotesDao
+import pl.wojtach.silvarerum2.room.toRoomEntity
 import pl.wojtach.silvarerum2.utils.updateSelected
 import java.util.UUID
 
-class Notes(scope: CoroutineScope): CoroutineScope by scope {
+class Notes(scope: CoroutineScope, private val notesDao: NotesDao): CoroutineScope by scope {
 
-    private val state = MutableStateFlow(listOf(NoteSnapshot(noteId = NoteId("a"), Timestamp(System.currentTimeMillis()), content = "Ala ma kota")))
+    private val state: MutableStateFlow<List<NoteSnapshot>> = MutableStateFlow<List<NoteSnapshot>>(emptyList()).apply {
+        launch { emit(notesDao.getAll().first().map { it.asNote() }) }
+    }
 
     val all: StateFlow<List<NoteSnapshot>>
         get() = state
@@ -21,6 +30,10 @@ class Notes(scope: CoroutineScope): CoroutineScope by scope {
     private val eventQueue = EventQueue<NavDestination>(64)
     val events: SharedEvents<NavDestination>
         get() = eventQueue
+
+    init {
+        state.drop(1).onEach { noteList -> noteList.forEach { notesDao.upsert(it.toRoomEntity()) } }.launchIn(this)
+    }
 
     fun add(newContent: String = "") {
         val timestamp = Timestamp(System.currentTimeMillis())
@@ -45,6 +58,7 @@ class Notes(scope: CoroutineScope): CoroutineScope by scope {
         state.update { notes ->
             notes.filter { it.noteId != note.noteId }
         }
+        launch { notesDao.delete(note.toRoomEntity()) }
     }
 
     fun noteClicked(id: NoteId) {

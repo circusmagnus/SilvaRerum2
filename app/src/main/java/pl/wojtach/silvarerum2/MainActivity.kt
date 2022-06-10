@@ -4,21 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
-import pl.wojtach.silvarerum2.ui.theme.Typography
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
@@ -27,8 +15,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import pl.wojtach.silvarerum2.manualdi.Injector
+import pl.wojtach.silvarerum2.manualdi.NotesDaoFactory
 
 class MainActivity : ComponentActivity() {
+
+    private val notesDao by Injector(NotesDaoFactory)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,7 +34,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainScreen() {
         val scope = rememberCoroutineScope()
-        val notes = remember(key1 = scope) { Notes(scope) }
+        val notes = remember(key1 = scope) { Notes(scope, notesDao) }
         val navController = rememberNavController()
 
         Log.d("lw", "MainScreen composed")

@@ -4,6 +4,7 @@
     package="pl.wojtach.silvarerum2">
 
     <application
+        android:name="pl.wojtach.silvarerum2.NotesApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +14,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.SilvaRerum2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
