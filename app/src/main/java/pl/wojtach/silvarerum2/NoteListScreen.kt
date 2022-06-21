@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddNoteButton
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
@@ -20,31 +21,38 @@ import pl.wojtach.silvarerum2.widgets.NoteList
 import pl.wojtach.silvarerum2.widgets.ShortNote
 
 @Composable
-fun NoteListScreen(notes: Notes) {
+fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot) -> Unit, onNoteEdit: (NoteSnapshot) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val noteListData by notes.all.collectWhileStarted(lifecycleOwner = lifecycleOwner)
     val scope = rememberCoroutineScope()
-    val addNoteClicks = remember(key1 = scope, key2 = notes) {
-        ThrottledConsumer<String>(scope, 500) { newNoteContent -> notes.add(newNoteContent) }
+    val model = remember(key1 = scope) { notesDeps().noteListModel(scope) }
+
+    val addNoteClicks = remember(key1 = scope, key2 = model) {
+        ThrottledConsumer<Unit>(scope, 500) {
+            val newNote = model.addNew()
+            onNoteAdd(newNote)
+        }
     }
-    val editNoteClicks = remember(key1 = scope, key2 = notes) {
-        ThrottledConsumer<NoteSnapshot>(scope, 500) { note -> notes.edit(note) }
+
+    val editNoteClicks = remember(key1 = scope, key2 = model) {
+        ThrottledConsumer<NoteSnapshot>(scope, 500) { note -> onNoteEdit(note) }
     }
+
+    val currentList by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     Log.d("lw", "NoteListScreen composed")
 
     NoteListLayout(
         topBar = { TopAppBar { Text(modifier = Modifier.padding(8.dp), text = "Silva Rerum") } },
         noteListUi = {
-            NoteList(noteList = { noteListData }, ShortNoteCellFact = { note ->
+            NoteList(noteList = currentList, ShortNoteCellFact = { note ->
                 ShortNote(
-                    note = { note },
-                    onClick = { notes.noteClicked(note.noteId) },
-                    DeleteButton = { DeleteNoteButton { notes.delete(note) } },
+                    note = note,
+                    onClick = { onNoteClick(note) },
+                    DeleteButton = { DeleteNoteButton { model.delete(note) } },
                     EditButton = { EditNoteButton { editNoteClicks.send(note) } })
             })
         },
-        floatingButton = { AddNoteButton { addNoteClicks.send("") } }
+        floatingButton = { AddNoteButton { addNoteClicks.send(Unit) } }
     )
 }
 

@@ -7,34 +7,39 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import pl.wojtach.silvarerum2.manualdi.notesDeps
+import pl.wojtach.silvarerum2.utils.collectWhileStarted
+import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 
 @Composable
-fun ReadOnlyNoteScreen(noteId: NoteId, notes: Notes) {
-    val note by notes.get(noteId).collectAsState(initial = null)
+fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, onDeletion: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val editClicks = remember(key1 = notes, key2 = scope) {
-        ThrottledConsumer<NoteSnapshot>(scope, 500) { notes.edit(it) }
-    }
+    val model = remember(key1 = scope) { notesDeps().readNoteModel(scope, note) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentNote by model.state.collectWhileStarted(lifecycleOwner)
+
     ReadOnlyNote(
-        content = note?.content ?: "",
-        EditButton = { note?.let { noteSnapshot -> EditNoteButton { editClicks.send(noteSnapshot) } } }
+        content = currentNote.content,
+        EditButton = { EditNoteButton { toEditing(currentNote) } },
+        DeleteButton = { DeleteNoteButton { model.delete(); onDeletion() } }
     )
 }
 
 @Composable
-fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit) {
+fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButton: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar {
                 Row(modifier = Modifier.padding(8.dp)) {
                     Spacer(modifier = Modifier.weight(1f, fill = true))
+                    DeleteButton()
                     EditButton()
                 }
 
