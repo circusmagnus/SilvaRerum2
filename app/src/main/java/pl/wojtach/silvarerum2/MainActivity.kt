@@ -19,6 +19,7 @@ import pl.wojtach.silvarerum2.manualdi.AppDeps
 import pl.wojtach.silvarerum2.manualdi.Injector
 import pl.wojtach.silvarerum2.manualdi.NotesDaoFactory
 import pl.wojtach.silvarerum2.manualdi.appDeps
+import pl.wojtach.silvarerum2.manualdi.notesDeps
 
 class MainActivity : ComponentActivity() {
 
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainScreen() {
         val scope = rememberCoroutineScope()
-        val notes = remember(key1 = scope) { appDeps().notes(scope) }
+        val notes = remember(key1 = scope) { notesDeps().notes(scope) }
         val navController = rememberNavController()
 
         Log.d("lw", "MainScreen composed")

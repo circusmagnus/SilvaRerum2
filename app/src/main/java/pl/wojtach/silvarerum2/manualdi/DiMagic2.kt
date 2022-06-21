@@ -22,18 +22,12 @@ class AppModule(private val appContext: Context) : AppDeps {
     override fun appScope(): CoroutineScope = appScope
 
     override fun appDb(): AppDatabase = appDb
-
-    override fun notesDao(): NotesDao = appDb.notesDao()
-
-    override fun notes(scope: CoroutineScope) = Notes(scope, notesDao())
 }
 
 interface AppDeps {
     fun appContext(): Context
     fun appScope(): CoroutineScope
     fun appDb(): AppDatabase
-    fun notesDao(): NotesDao
-    fun notes(scope: CoroutineScope): Notes
 
     companion object {
         lateinit var container: AppDeps
@@ -41,3 +35,21 @@ interface AppDeps {
 }
 
 fun appDeps() = AppDeps.container
+
+interface NotesDeps {
+    fun notesDao(): NotesDao
+    fun notes(scope: CoroutineScope): Notes
+
+    companion object {
+        lateinit var container: NotesDeps
+    }
+}
+
+class NotesModule(private val appDeps: AppDeps) : NotesDeps {
+
+    override fun notesDao(): NotesDao = appDeps.appDb().notesDao()
+
+    override fun notes(scope: CoroutineScope): Notes = Notes(scope, notesDao())
+}
+
+fun notesDeps() = NotesDeps.container
