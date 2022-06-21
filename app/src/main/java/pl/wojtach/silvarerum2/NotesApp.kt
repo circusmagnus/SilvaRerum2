@@ -2,9 +2,8 @@ package pl.wojtach.silvarerum2
 
 import android.app.Application
 import android.os.StrictMode
-import pl.wojtach.silvarerum2.manualdi.AppContextProvider
-import pl.wojtach.silvarerum2.manualdi.AppDatabaseProvider
-import pl.wojtach.silvarerum2.manualdi.Injector
+import pl.wojtach.silvarerum2.manualdi.AppDeps
+import pl.wojtach.silvarerum2.manualdi.AppModule
 
 class NotesApp: Application() {
 
@@ -14,6 +13,6 @@ class NotesApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AppContextProvider.init(this)
+        AppDeps.container = AppModule(this)
     }
 }

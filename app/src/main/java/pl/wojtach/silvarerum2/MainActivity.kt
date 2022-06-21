@@ -15,12 +15,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import pl.wojtach.silvarerum2.manualdi.AppDeps
 import pl.wojtach.silvarerum2.manualdi.Injector
 import pl.wojtach.silvarerum2.manualdi.NotesDaoFactory
+import pl.wojtach.silvarerum2.manualdi.appDeps
 
 class MainActivity : ComponentActivity() {
-
-    private val notesDao by Injector(NotesDaoFactory)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainScreen() {
         val scope = rememberCoroutineScope()
-        val notes = remember(key1 = scope) { Notes(scope, notesDao) }
+        val notes = remember(key1 = scope) { appDeps().notes(scope) }
         val navController = rememberNavController()
 
         Log.d("lw", "MainScreen composed")
