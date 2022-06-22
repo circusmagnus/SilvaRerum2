@@ -5,10 +5,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
 import pl.wojtach.silvarerum2.parcels.toParcel
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
+import pl.wojtach.silvarerum2.utils.collectWhileStarted
 
 class MainActivity : ComponentActivity() {
 
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainScreen() {
         Log.d("lw", "MainScreen composed")
-        val currentDestination = navigationModel.state.collectAsState()
+        val lifecycleOwner = LocalLifecycleOwner.current
+        val currentDestination = navigationModel.state.collectWhileStarted(lifecycleOwner)
         Navigation(navigationModel = navigationModel, destination = currentDestination.value)
     }
 
