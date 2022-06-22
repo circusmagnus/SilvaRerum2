@@ -17,18 +17,14 @@ class NavigationModel(initialDestination: Destination = Destination.NoteList, ba
 
     fun popBackstack(upTo: String? = null): Boolean = when {
         prevDestinations.isEmpty() -> false
-        upTo == null               -> {
-            _state.tryEmit(prevDestinations.removeFirst())
-            true
-        }
         else                       -> popUpTo(upTo)
     }
 
-    private tailrec fun popUpTo(name: String): Boolean =
+    private tailrec fun popUpTo(name: String?): Boolean =
         if (prevDestinations.isEmpty()) false
         else {
             val next = prevDestinations.removeFirst()
-            if (next.name == name) {
+            if (name == null || next.name == name) {
                 _state.tryEmit(next)
                 true
             } else popUpTo(name)
