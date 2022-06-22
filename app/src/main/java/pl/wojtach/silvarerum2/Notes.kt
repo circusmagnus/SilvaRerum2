@@ -51,17 +51,19 @@ class ReadNoteModel(scope: CoroutineScope, private val note: NoteSnapshot, priva
 class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notesDao: NotesDao) :
     CoroutineScope by scope {
 
-    val state: StateFlow<NoteSnapshot> = notesDao
+    private val previousEdits = ArrayDeque<String>(20)
+    private val undoEnabled get() = previousEdits.isNotEmpty()
+
+    val state: StateFlow<ViewState> = notesDao
         .getById(note.id)
         .map { it.asNote() }
-        .stateIn(scope, SharingStarted.WhileSubscribed(), note)
-
-    private val previousEdits = ArrayDeque<String>(20)
+        .map { note -> ViewState(note, undoEnabled) }
+        .stateIn(scope, SharingStarted.WhileSubscribed(), ViewState(note, undoEnabled))
 
     private val newEdits = Channel<String>(CONFLATED).apply {
         consumeAsFlow()
             .onEach { edit ->
-                val prevEdit = state.value
+                val prevEdit = state.value.note
                 val newEdit = prevEdit.copy(content = edit)
                 notesDao.update(newEdit.toRoomEntity())
                 previousEdits.addFirst(prevEdit.content)
@@ -72,7 +74,7 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
         consumeAsFlow()
             .onEach {
                 previousEdits.removeFirstOrNull()?.let { prevEdit ->
-                    val currentSnapshot = state.value
+                    val currentSnapshot = state.value.note
                     val afterUndo = currentSnapshot.copy(content = prevEdit)
                     notesDao.update(afterUndo.toRoomEntity())
                 }
@@ -86,4 +88,6 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
     fun undo() {
         newUndos.trySend(Unit)
     }
+
+    data class ViewState(val note: NoteSnapshot, val undoEnabled: Boolean)
 }

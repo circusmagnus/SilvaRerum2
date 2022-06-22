@@ -27,18 +27,16 @@ fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
     val scope = rememberCoroutineScope()
     val model = remember(key1 = scope) { notesDeps().editNoteModel(scope, noteSnapshot) }
 
-    val note by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
+    val viewState by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     EditNoteLayout(
-        TextField = { EditTextField(content = note.content, onValueChange = model::edit ) },
-        UndoButton = { UndoButton(model::undo) }
+        TextField = { EditTextField(content = viewState.note.content, onValueChange = model::edit ) },
+        UndoButton = { if(viewState.undoEnabled) UndoButton(model::undo) else Unit }
     )
-
-//    EditTextField(content = currentContent.content, onValueChange = { newContent -> model.edit(newContent)} )
 }
 
 @Composable
-fun EditNoteLayout(TextField: @Composable () -> Unit, UndoButton: @Composable () -> Unit) {
+fun EditNoteLayout(UndoButton: @Composable () -> Unit, TextField: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar {
