@@ -11,4 +11,3 @@ import kotlinx.coroutines.Job
  * parent. Any CoroutineExceptionHandler installed in child has no effect.
  */
 fun CoroutineScope.newChildScope(): CoroutineScope = CoroutineScope(coroutineContext + Job(parent = coroutineContext[Job]))
-

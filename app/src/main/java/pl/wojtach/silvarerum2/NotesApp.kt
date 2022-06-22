@@ -6,6 +6,7 @@ import pl.wojtach.silvarerum2.manualdi.AppDeps
 import pl.wojtach.silvarerum2.manualdi.AppModule
 import pl.wojtach.silvarerum2.manualdi.NotesDeps
 import pl.wojtach.silvarerum2.manualdi.NotesModule
+import pl.wojtach.silvarerum2.manualdi.appDeps
 
 class NotesApp: Application() {
 
@@ -16,6 +17,6 @@ class NotesApp: Application() {
     override fun onCreate() {
         super.onCreate()
         AppDeps.container = AppModule(this)
-        NotesDeps.container = NotesModule(AppDeps.container)
+        NotesDeps.container = NotesModule(appDeps())
     }
 }
