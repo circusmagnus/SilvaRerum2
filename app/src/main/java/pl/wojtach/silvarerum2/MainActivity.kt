@@ -37,34 +37,9 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun MainScreen() {
-//        val notes = remember(key1 = scope) { notesDeps().notes(scope) }
-//        val navController = rememberNavController()
-
         Log.d("lw", "MainScreen composed")
-
         val currentDestination = navigationModel.state.collectAsState()
-
         Navigation(navigationModel = navigationModel, destination = currentDestination.value)
-
-//        LaunchedEffect(key1 = notes, key2 = navController) {
-//            notes.events.getFor("MainScreen")
-//                .onEach { dest -> navController.navigate(dest.uri) }
-//                .launchIn(this)
-//        }
-
-//        NavHost(navController = navController, startDestination = NavDestination.NoteList.id) {
-//            composable(NavDestination.NoteList.id) { NoteListScreen(notes = notes) }
-//            composable(NavDestination.ReadNote.id) { navBackStackEntry ->
-//                ReadOnlyNoteScreen(noteId = NoteId(navBackStackEntry.arguments?.getString("noteId")!!), notes = notes)
-//            }
-//            composable(NavDestination.EditNote.id) { navBackStackEntry ->
-//                EditNoteScreen(notes = notes, noteId = NoteId(navBackStackEntry.arguments?.getString("noteId")!!))
-//            }
-//        }
-
-//        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-//            ShowNotes(navController = navController, event = navigationEvent)
-//        }
     }
 
     @Composable

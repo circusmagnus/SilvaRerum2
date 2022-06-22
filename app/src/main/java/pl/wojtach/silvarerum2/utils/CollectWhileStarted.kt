@@ -18,8 +18,6 @@ fun <T> StateFlow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner): State<
     initialValue = value,
     key1 = lifecycleOwner,
     producer = {
-//        flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-//            .onEach { Log.d("lw", "collecting state while started. State: $it") }
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             onEach { Log.d("lw", "collecting state while started. State: $it") }.collect { value = it }
         }
@@ -33,10 +31,7 @@ fun <T> Flow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner, initialValue
     key2 = initialValue,
     producer = {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-//            onEach { Log.d("lw", "collecting state while started. State: $it") }
             onEach { Log.d("lw", "collecting state while started. State: $it") }.collect { value = it }
         }
-//        flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-
     }
 )

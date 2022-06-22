@@ -25,18 +25,6 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val model = remember(key1 = scope) { notesDeps().noteListModel(scope) }
-
-    val addNoteClicks = remember(key1 = scope, key2 = model) {
-        ThrottledConsumer<Unit>(scope, 500) {
-            val newNote = model.addNew()
-            onNoteAdd(newNote)
-        }
-    }
-
-    val editNoteClicks = remember(key1 = scope, key2 = model) {
-        ThrottledConsumer<NoteSnapshot>(scope, 500) { note -> onNoteEdit(note) }
-    }
-
     val currentList by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     Log.d("lw", "NoteListScreen composed")
@@ -49,10 +37,15 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
                     note = note,
                     onClick = { onNoteClick(note) },
                     DeleteButton = { DeleteNoteButton { model.delete(note) } },
-                    EditButton = { EditNoteButton { editNoteClicks.send(note) } })
+                    EditButton = { EditNoteButton { onNoteEdit(note) } })
             })
         },
-        floatingButton = { AddNoteButton { addNoteClicks.send(Unit) } }
+        floatingButton = {
+            AddNoteButton {
+                val newNote = model.addNew()
+                onNoteAdd(newNote)
+            }
+        }
     )
 }
 
