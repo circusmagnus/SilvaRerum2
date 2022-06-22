@@ -8,9 +8,11 @@ class NavigationModel(initialDestination: Destination = Destination.NoteList, ba
     private val _state = MutableStateFlow<Destination>(initialDestination)
     val state: StateFlow<Destination> get() = _state
 
-    val prevDestinations = ArrayDeque<Destination>(5).apply {
+    private val prevDestinations = ArrayDeque<Destination>(5).apply {
         for(element in backstack) this.addLast(element)
     }
+
+    val backStack: List<Destination> get() = prevDestinations.toList()
 
     fun goTo(destination: Destination) {
         prevDestinations.addFirst(state.value)
