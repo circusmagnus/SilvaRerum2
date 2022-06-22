@@ -6,19 +6,33 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
+import pl.wojtach.silvarerum2.parcels.toParcel
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
 
 class MainActivity : ComponentActivity() {
 
-    val navigationModel = NavigationModel()
+    private lateinit var navigationModel: NavigationModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navigationModel =
+            if (savedInstanceState != null) {
+                savedInstanceState.getParcelable<ParcelizedNavigationModel>(NAV_MODEL_KEY)
+                    ?.toNavigationModel()
+                    ?: NavigationModel()
+            } else NavigationModel()
+
         setContent {
             SilvaRerum2Theme {
                 MainScreen()
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelable(NAV_MODEL_KEY, navigationModel.toParcel())
+        super.onSaveInstanceState(outState)
     }
 
     @Composable
@@ -76,5 +90,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val TAG = "MainActivity"
+        const val NAV_MODEL_KEY = "NavModelKey"
     }
 }

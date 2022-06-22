@@ -3,12 +3,12 @@ package pl.wojtach.silvarerum2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class NavigationModel {
+class NavigationModel(initialDestination: Destination = Destination.NoteList, backstack: List<Destination> = emptyList()) {
 
-    private val _state = MutableStateFlow<Destination>(Destination.NoteList)
+    private val _state = MutableStateFlow<Destination>(initialDestination)
     val state: StateFlow<Destination> get() = _state
 
-    private val prevDestinations = ArrayDeque<Destination>(5)
+    val prevDestinations = ArrayDeque<Destination>(5).apply { addAll(backstack) }
 
     fun goTo(destination: Destination) {
         prevDestinations.addFirst(state.value)
@@ -43,10 +43,18 @@ sealed interface Destination {
     }
 
     class ReadNote(val note: NoteSnapshot) : Destination {
-        override val name: String = "ReadNote"
+        override val name: String get() = destName
+
+        companion object {
+            const val destName: String = "ReadNote"
+        }
     }
 
     class EditNote(val note: NoteSnapshot) : Destination {
-        override val name: String = "EditNote"
+        override val name: String get() = destName
+
+        companion object {
+            const val destName: String = "EditNote"
+        }
     }
 }

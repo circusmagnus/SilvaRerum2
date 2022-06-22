@@ -5,6 +5,7 @@ plugins {
     id ("org.jetbrains.kotlin.android")
 //    id ("com.google.devtools.ksp") version "$1.6.10-1.0.2"
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
 
 val composeVersion = "1.1.1"
