@@ -1,7 +1,6 @@
 package pl.wojtach.silvarerum2
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -17,6 +16,7 @@ import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
+import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
 fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, onDeletion: () -> Unit) {
@@ -38,7 +38,7 @@ fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButt
         topBar = {
             TopAppBar {
                 Row(modifier = Modifier.padding(8.dp)) {
-                    Spacer(modifier = Modifier.weight(1f, fill = true))
+                    SilvaRerumHeader(modifier = Modifier.weight(1f, fill = true))
                     DeleteButton()
                     EditButton()
                 }

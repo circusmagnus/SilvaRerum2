@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +48,14 @@ fun DeleteNoteButton(onClick: () -> Unit = {}) {
 fun EditNoteButton(onClick: () -> Unit = {}) {
     IconButton(onClick = onClick) {
         Icon(Icons.Filled.Edit, contentDescription = "delete")
+    }
+}
+
+@Composable
+@Preview
+fun UndoButton(onClick: () -> Unit = {}) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Filled.Undo, contentDescription = "undo")
     }
 }
 
@@ -87,4 +96,10 @@ fun ShortNote(
         }
 
     }
+}
+
+@Composable
+@Preview
+fun SilvaRerumHeader(modifier: Modifier = Modifier){
+    Text(modifier = modifier.padding(8.dp), text = "Silva Rerum")
 }

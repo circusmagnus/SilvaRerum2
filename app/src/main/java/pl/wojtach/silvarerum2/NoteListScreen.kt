@@ -1,17 +1,13 @@
 package pl.wojtach.silvarerum2
 
 import android.util.Log
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
 import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddNoteButton
@@ -19,6 +15,7 @@ import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.NoteList
 import pl.wojtach.silvarerum2.widgets.ShortNote
+import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
 fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot) -> Unit, onNoteEdit: (NoteSnapshot) -> Unit) {
@@ -30,7 +27,7 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
     Log.d("lw", "NoteListScreen composed")
 
     NoteListLayout(
-        topBar = { TopAppBar { Text(modifier = Modifier.padding(8.dp), text = "Silva Rerum") } },
+        topBar = { TopAppBar { SilvaRerumHeader() } },
         noteListUi = {
             NoteList(noteList = currentList, ShortNoteCellFact = { note ->
                 ShortNote(
