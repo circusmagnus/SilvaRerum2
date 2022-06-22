@@ -50,7 +50,5 @@ fun Destination.toParcel() = ParcelizedDestination(
 
 fun NavigationModel.toParcel() = ParcelizedNavigationModel(
     currentDest = state.value.toParcel(),
-    backstack = buildList {
-        for (dest in backStack) add(dest.toParcel())
-    }
+    backstack = backStack.map { it.toParcel() }
 )
