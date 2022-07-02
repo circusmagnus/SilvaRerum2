@@ -9,9 +9,10 @@ import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.Timestamp
 
 @Parcelize
-class ParcelizedNote(val id: String, val timestamp: Long, val content: String) : Parcelable {
+class ParcelizedNote(val id: String, val timestamp: Long, val content: String, val lastModified: Long) : Parcelable {
 
-    fun toNoteSnapshot() = NoteSnapshot(NoteId(id), Timestamp(timestamp), content)
+    fun toNoteSnapshot() =
+        NoteSnapshot(NoteId(id), created = Timestamp(timestamp), content, lastModified = Timestamp(lastModified))
 }
 
 @Parcelize
@@ -29,7 +30,7 @@ class ParcelizedDestination(
 }
 
 @Parcelize
-class ParcelizedNavigationModel(val currentDest: ParcelizedDestination, val backstack: List<ParcelizedDestination>): Parcelable {
+class ParcelizedNavigationModel(val currentDest: ParcelizedDestination, val backstack: List<ParcelizedDestination>) : Parcelable {
 
     fun toNavigationModel(): NavigationModel = NavigationModel(
         initialDestination = currentDest.toDestination(),
@@ -37,7 +38,8 @@ class ParcelizedNavigationModel(val currentDest: ParcelizedDestination, val back
     )
 }
 
-fun NoteSnapshot.toParcel() = ParcelizedNote(id = noteId.value, timestamp = created.value, content = content)
+fun NoteSnapshot.toParcel() =
+    ParcelizedNote(id = noteId.value, timestamp = created.value, content = content, lastModified = lastModified.value)
 
 fun Destination.toParcel() = ParcelizedDestination(
     name = name,

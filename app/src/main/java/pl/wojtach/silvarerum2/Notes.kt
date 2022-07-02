@@ -28,7 +28,7 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
 
     fun addNew(): NoteSnapshot {
         val timestamp = Timestamp(System.currentTimeMillis())
-        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), timestamp, "")
+        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), created = timestamp, "", lastModified = timestamp)
         launch {
             notesDao.insert(newNote.toRoomEntity())
         }

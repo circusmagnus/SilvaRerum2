@@ -5,7 +5,8 @@ import pl.wojtach.silvarerum2.utils.HasStableId
 data class NoteSnapshot(
     val noteId: NoteId,
     val created: Timestamp,
-    val content: String
+    val content: String,
+    val lastModified: Timestamp = created
 ): HasStableId {
     override val id: String
         get() = noteId.value

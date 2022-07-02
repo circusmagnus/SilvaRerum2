@@ -75,7 +75,11 @@ fun NoteList(noteList: List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteS
 
 @Composable
 fun ShortNote(
-    note: NoteSnapshot = NoteSnapshot(NoteId("a"), Timestamp(System.currentTimeMillis()), "Ala ma kota"),
+    note: NoteSnapshot = NoteSnapshot(
+        NoteId("a"),
+        created = Timestamp(System.currentTimeMillis()),
+        "Ala ma kota",
+    ),
     onClick: () -> Unit,
     DeleteButton: @Composable () -> Unit,
     EditButton: @Composable () -> Unit
@@ -100,6 +104,6 @@ fun ShortNote(
 
 @Composable
 @Preview
-fun SilvaRerumHeader(modifier: Modifier = Modifier){
+fun SilvaRerumHeader(modifier: Modifier = Modifier) {
     Text(modifier = modifier.padding(8.dp), text = "Silva Rerum")
 }

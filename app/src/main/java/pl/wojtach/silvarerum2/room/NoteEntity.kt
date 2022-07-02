@@ -11,13 +11,16 @@ import pl.wojtach.silvarerum2.utils.HasStableId
 data class NoteEntity(
     @PrimaryKey override val id: String,
     val timestamp: Long,
-    val content: String
-): HasStableId {
-    fun asNote(): NoteSnapshot = NoteSnapshot(NoteId(id), Timestamp(timestamp), content)
+    val content: String,
+    val lastModified: Long = timestamp
+) : HasStableId {
+    fun asNote(): NoteSnapshot =
+        NoteSnapshot(NoteId(id), created = Timestamp(timestamp), content, lastModified = Timestamp(lastModified))
 
     companion object {
         const val TABLE_NAME = "Notes"
     }
 }
 
-fun NoteSnapshot.toRoomEntity(): NoteEntity = NoteEntity(noteId.value, created.value, content)
+fun NoteSnapshot.toRoomEntity(): NoteEntity =
+    NoteEntity(noteId.value, timestamp = created.value, content, lastModified = lastModified.value)

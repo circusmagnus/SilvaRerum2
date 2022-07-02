@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class NavigationModel(initialDestination: Destination = Destination.NoteList, backstack: List<Destination> = emptyList()) {
 
-    private val _state = MutableStateFlow<Destination>(initialDestination)
+    private val _state = MutableStateFlow(initialDestination)
     val state: StateFlow<Destination> get() = _state
 
     private val prevDestinations = ArrayDeque<Destination>(5).apply {
