@@ -20,6 +20,7 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
     val state: StateFlow<List<NoteSnapshot>> = notesDao
         .getAll()
         .map { entities -> entities.map { it.asNote() } }
+        .map { notes -> notes.sortedWith(LastModifiedComparator()) }
         .stateIn(scope, SharingStarted.WhileSubscribed(), emptyList())
 
     fun delete(note: NoteSnapshot) {
@@ -28,11 +29,22 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
 
     fun addNew(): NoteSnapshot {
         val timestamp = Timestamp(System.currentTimeMillis())
-        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), created = timestamp, "", lastModified = timestamp)
+        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), created = timestamp, "",)
         launch {
             notesDao.insert(newNote.toRoomEntity())
         }
         return newNote
+    }
+
+    private class LastModifiedComparator: Comparator<NoteSnapshot> {
+
+        override fun compare(first: NoteSnapshot, second: NoteSnapshot): Int {
+            val byLastModification = (first.lastModified.value compareTo second.lastModified.value) * -1
+
+            return if (byLastModification != 0) byLastModification else {
+                (first.created.value compareTo second.created.value) * -1
+            }
+        }
     }
 }
 
@@ -64,7 +76,7 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
         consumeAsFlow()
             .onEach { edit ->
                 val prevEdit = state.value.note
-                val newEdit = prevEdit.copy(content = edit)
+                val newEdit = prevEdit.copy(content = edit, lastModified = Timestamp(System.currentTimeMillis()))
                 notesDao.update(newEdit.toRoomEntity())
                 previousEdits.addFirst(prevEdit.content)
             }.launchIn(this@EditNoteModel)
