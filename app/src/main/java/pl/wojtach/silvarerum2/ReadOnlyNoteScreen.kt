@@ -2,6 +2,7 @@ package pl.wojtach.silvarerum2
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -46,6 +47,6 @@ fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButt
             }
         }
     ) {
-        Text(text = content)
+        SelectionContainer { Text(text = content) }
     }
 }
