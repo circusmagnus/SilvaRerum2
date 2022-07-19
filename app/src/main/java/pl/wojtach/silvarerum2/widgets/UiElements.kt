@@ -75,7 +75,6 @@ fun NoteList(noteList: List<NoteSnapshot>, ShortNoteCellFact: @Composable (NoteS
 
 @Composable
 fun ShortNote(
-    modifier: Modifier = Modifier,
     note: NoteSnapshot = NoteSnapshot(
         NoteId("a"),
         created = Timestamp(System.currentTimeMillis()),
@@ -87,7 +86,7 @@ fun ShortNote(
 ) {
     Log.d("lw", "Short Note Cell composed")
 
-    Card(modifier = modifier, border = BorderStroke(1.dp, color = Color.Black)) {
+    Card(border = BorderStroke(1.dp, color = Color.Black)) {
         Row(Modifier.clickable { onClick() }) {
             Text(
                 text = note.content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier
