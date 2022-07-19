@@ -3,8 +3,10 @@ package pl.wojtach.silvarerum2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -65,10 +67,12 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
 
     private val previousEdits = ArrayDeque<String>(20)
     private val undoEnabled get() = previousEdits.isNotEmpty()
+    private val localNoteState = MutableStateFlow(note)
 
     val state: StateFlow<ViewState> = notesDao
         .getById(note.id)
         .map { it.asNote() }
+        .combine(localNoteState) { dbNote, localNote -> pickLatest(dbNote, localNote) }
         .map { note -> ViewState(note, undoEnabled) }
         .stateIn(scope, SharingStarted.WhileSubscribed(), ViewState(note, undoEnabled))
 
@@ -77,6 +81,7 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
             .onEach { edit ->
                 val prevEdit = state.value.note
                 val newEdit = prevEdit.copy(content = edit, lastModified = Timestamp(System.currentTimeMillis()))
+                localNoteState.emit(newEdit)
                 notesDao.update(newEdit.toRoomEntity())
                 previousEdits.addFirst(prevEdit.content)
             }.launchIn(this@EditNoteModel)
@@ -100,6 +105,9 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
     fun undo() {
         newUndos.trySend(Unit)
     }
+
+    private fun pickLatest(note1: NoteSnapshot, note2: NoteSnapshot): NoteSnapshot =
+        if(note1.created > note2.created)  note1 else note2
 
     data class ViewState(val note: NoteSnapshot, val undoEnabled: Boolean)
 }

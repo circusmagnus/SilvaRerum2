@@ -16,4 +16,6 @@ data class NoteSnapshot(
 value class NoteId(val value: String)
 
 @JvmInline
-value class Timestamp(val value: Long)
+value class Timestamp(val value: Long): Comparable<Timestamp> {
+    override fun compareTo(other: Timestamp): Int = this.value.compareTo(other.value)
+}
