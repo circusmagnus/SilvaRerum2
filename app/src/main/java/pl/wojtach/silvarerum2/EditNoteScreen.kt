@@ -30,8 +30,8 @@ fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
     val viewState by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     EditNoteLayout(
-        TextField = { EditTextField(content = viewState.note.content, onValueChange = model::edit ) },
-        UndoButton = { if(viewState.undoEnabled) UndoButton(model::undo) else Unit }
+        TextField = { EditTextField(content = viewState.note.content, onValueChange = model::edit) },
+        UndoButton = { if (viewState.undoEnabled) UndoButton(model::undo) else Unit }
     )
 }
 
@@ -46,13 +46,16 @@ fun EditNoteLayout(UndoButton: @Composable () -> Unit, TextField: @Composable ()
                 }
             }
         },
-       content =  { TextField() }
+        content = { TextField() }
     )
 }
 
 @Composable
 fun EditTextField(content: String, onValueChange: (newContent: String) -> Unit) {
-    Log.d("lw", "EditNote composed")
 
-    TextField(value = content, onValueChange = onValueChange, label = { Text("Treść") })
+    TextField(
+        value = content,
+        onValueChange = onValueChange,
+        label = { Text("Treść") }
+    )
 }
