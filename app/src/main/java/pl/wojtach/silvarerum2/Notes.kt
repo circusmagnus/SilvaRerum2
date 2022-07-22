@@ -1,12 +1,13 @@
 package pl.wojtach.silvarerum2
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -67,47 +68,32 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
 
     private val previousEdits = ArrayDeque<String>(20)
     private val undoEnabled get() = previousEdits.isNotEmpty()
-    private val localNoteState = MutableStateFlow(note)
 
-    val state: StateFlow<ViewState> = notesDao
-        .getById(note.id)
-        .map { it.asNote() }
-        .combine(localNoteState) { dbNote, localNote -> pickLatest(dbNote, localNote) }
-        .map { note -> ViewState(note, undoEnabled) }
-        .stateIn(scope, SharingStarted.WhileSubscribed(), ViewState(note, undoEnabled))
+    private val _state: MutableState<ViewState> = mutableStateOf(ViewState(note, undoEnabled))
+    val state: State<ViewState> get() = _state
 
-    private val newEdits = Channel<String>(CONFLATED).apply {
+    private val dbUpdates = Channel<NoteSnapshot>(CONFLATED).apply {
         consumeAsFlow()
-            .onEach { edit ->
-                val prevEdit = state.value.note
-                val newEdit = prevEdit.copy(content = edit, lastModified = Timestamp(System.currentTimeMillis()))
-                localNoteState.emit(newEdit)
-                notesDao.update(newEdit.toRoomEntity())
-                previousEdits.addFirst(prevEdit.content)
-            }.launchIn(this@EditNoteModel)
-    }
-
-    private val newUndos = Channel<Unit>(CONFLATED).apply {
-        consumeAsFlow()
-            .onEach {
-                previousEdits.removeFirstOrNull()?.let { prevEdit ->
-                    val currentSnapshot = state.value.note
-                    val afterUndo = currentSnapshot.copy(content = prevEdit)
-                    notesDao.update(afterUndo.toRoomEntity())
-                }
-            }.launchIn(this@EditNoteModel)
+            .onEach { update -> notesDao.update(update.toRoomEntity()) }
+            .launchIn(this@EditNoteModel)
     }
 
     fun edit(newContent: String) {
-        newEdits.trySend(newContent)
+        val prevEdit = state.value.note
+        val newEdit = prevEdit.copy(content = newContent, lastModified = Timestamp(System.currentTimeMillis()))
+        previousEdits.addFirst(prevEdit.content)
+        _state.value = ViewState(newEdit, undoEnabled)
+        dbUpdates.trySend(newEdit)
     }
 
     fun undo() {
-        newUndos.trySend(Unit)
+        previousEdits.removeFirstOrNull()?.let { prevEdit ->
+            val currentSnapshot = state.value.note
+            val afterUndo = currentSnapshot.copy(content = prevEdit)
+            _state.value = ViewState(afterUndo, undoEnabled)
+            dbUpdates.trySend(afterUndo)
+        }
     }
-
-    private fun pickLatest(note1: NoteSnapshot, note2: NoteSnapshot): NoteSnapshot =
-        if(note1.created > note2.created)  note1 else note2
 
     data class ViewState(val note: NoteSnapshot, val undoEnabled: Boolean)
 }
