@@ -7,8 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.CONFLATED
 import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import pl.wojtach.silvarerum2.room.NotesDao
 import pl.wojtach.silvarerum2.room.toRoomEntity
 
@@ -18,7 +20,12 @@ class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notes
     private val previousEdits = ArrayDeque<String>(20)
     private val undoEnabled get() = previousEdits.isNotEmpty()
 
-    private val _state: MutableState<ViewState> = mutableStateOf(ViewState(note, undoEnabled))
+    private val _state: MutableState<ViewState> = mutableStateOf(ViewState(note, undoEnabled)).apply {
+        launch {
+            val currentNote = notesDao.getById(note.noteId.value).first().asNote()
+            this@apply.value = ViewState(currentNote, undoEnabled)
+        }
+    }
     val state: State<ViewState> get() = _state
 
     private val dbUpdates = Channel<NoteSnapshot>(CONFLATED).apply {
