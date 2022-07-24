@@ -8,17 +8,17 @@ import androidx.room.Update
 interface GenericDao<T> {
 
     @Insert
-    suspend fun insert(note: NoteEntity): Long
+    suspend fun insert(entity: T): Long
 
     @Update
-    suspend fun update(note: NoteEntity): Int
+    suspend fun update(entity: T): Int
 
     @Delete
-    suspend fun delete(note: NoteEntity)
+    suspend fun delete(entity: T)
 
     @Transaction
-    suspend fun upsert(note: NoteEntity) {
-        val updated = update(note)
-        if(updated == 0) insert(note)
+    suspend fun upsert(entity: T) {
+        val updated = update(entity)
+        if(updated == 0) insert(entity)
     }
 }
