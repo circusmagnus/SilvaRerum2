@@ -29,15 +29,15 @@ import pl.wojtach.silvarerum2.Timestamp
 
 @Composable
 @Preview
-fun AddNoteButton(onClick: () -> Unit = {}) {
-    FloatingActionButton(onClick = onClick, modifier = Modifier) {
+fun AddButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+    FloatingActionButton(onClick = onClick, modifier = modifier) {
         Icon(Icons.Filled.Add, contentDescription = "Add note")
     }
 }
 
 @Composable
 @Preview
-fun DeleteNoteButton(onClick: () -> Unit = {}) {
+fun DeleteNoteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     IconButton(onClick = onClick) {
         Icon(Icons.Filled.Delete, contentDescription = "delete")
     }
@@ -45,7 +45,7 @@ fun DeleteNoteButton(onClick: () -> Unit = {}) {
 
 @Composable
 @Preview
-fun EditNoteButton(onClick: () -> Unit = {}) {
+fun EditNoteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     IconButton(onClick = onClick) {
         Icon(Icons.Filled.Edit, contentDescription = "delete")
     }
@@ -53,7 +53,7 @@ fun EditNoteButton(onClick: () -> Unit = {}) {
 
 @Composable
 @Preview
-fun UndoButton(onClick: () -> Unit = {}) {
+fun UndoButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     IconButton(onClick = onClick) {
         Icon(Icons.Filled.Undo, contentDescription = "undo")
     }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
-import pl.wojtach.silvarerum2.widgets.AddNoteButton
+import pl.wojtach.silvarerum2.widgets.AddButton
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.NoteList
@@ -34,7 +34,7 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
             })
         },
         floatingButton = {
-            AddNoteButton {
+            AddButton {
                 val newNote = model.addNew()
                 onNoteAdd(newNote)
             }
