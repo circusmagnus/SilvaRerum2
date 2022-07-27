@@ -6,7 +6,8 @@ data class NoteSnapshot(
     val noteId: NoteId,
     val created: Timestamp,
     val content: String,
-    val lastModified: Timestamp = created
+    val lastModified: Timestamp = created,
+    val priority: Int
 ): HasStableId {
     override val id: String
         get() = noteId.value

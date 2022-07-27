@@ -32,10 +32,10 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
     val model = remember(key1 = scope) { notesDeps().noteListModel(scope) }
     val currentList by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
     val lazyListState = rememberLazyListState()
-    val draggedNote = remember {
+    val draggedNote = remember(key1 = currentList) {
         mutableStateOf<NoteSnapshot?>(null)
     }
-    val draggedNoteIndex = remember {
+    val draggedNoteIndex = remember(key1 = currentList) {
         mutableStateOf(0)
     }
     val listCellFactory: @Composable (Modifier, NoteSnapshot) -> Unit = { modifier, note ->
@@ -52,6 +52,7 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
                         onDrag = { change, offset -> draggedAmountY.value += offset.y },
                         onDragEnd = {
                             val visibleItems = lazyListState.layoutInfo.visibleItemsInfo
+                            Log.d("lw", "visibleItems: $visibleItems, draggedNoteIndex: $draggedNoteIndex")
                             val dragged = visibleItems.first { it.index == draggedNoteIndex.value }
                             val hoveredOver = visibleItems.firstOrNull { item -> dragged.offset + draggedAmountY.value.roundToInt() in item.offset..item.offset + item.size }
                             draggedNote.value = null
@@ -67,7 +68,7 @@ fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot
         )
     }
 
-    Log.d("lw", "NoteListScreen composed")
+    Log.d("lw", "NoteListScreen composed: $currentList")
 
     NoteListLayout(
         topBar = { TopAppBar { SilvaRerumHeader() } },

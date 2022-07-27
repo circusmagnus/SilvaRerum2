@@ -13,6 +13,9 @@ interface GenericDao<T> {
     @Update
     suspend fun update(entity: T): Int
 
+    @Update
+    suspend fun updateAll(entities: List<T>): Int
+
     @Delete
     suspend fun delete(entity: T)
 
