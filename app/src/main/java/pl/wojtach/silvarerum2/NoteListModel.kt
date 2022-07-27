@@ -1,5 +1,6 @@
 package pl.wojtach.silvarerum2
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,6 +30,10 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
             notesDao.insert(newNote.toRoomEntity())
         }
         return newNote
+    }
+
+    fun reorder(draggedNoteIndex: Int, shouldBeBeforeIndex: Int) {
+        Log.d("lw", "dragged note: $draggedNoteIndex reordered before index: $shouldBeBeforeIndex")
     }
 
     private class LastModifiedComparator: Comparator<NoteSnapshot> {
