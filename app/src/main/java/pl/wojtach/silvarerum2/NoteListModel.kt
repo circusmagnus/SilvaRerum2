@@ -25,33 +25,43 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
 
     fun addNew(): NoteSnapshot {
         val timestamp = Timestamp(System.currentTimeMillis())
-        val newNote = NoteSnapshot(NoteId(UUID.randomUUID().toString()), created = timestamp, "", priority = state.value.firstOrNull()?.priority ?: Int.MIN_VALUE)
+        val newNoteReversedIndex = (state.value.firstOrNull()?.reversedShowIndex ?: -1) + 1
+        val newNote =
+            NoteSnapshot(NoteId(UUID.randomUUID().toString()), created = timestamp, "", reversedShowIndex = newNoteReversedIndex)
         launch {
             notesDao.insert(newNote.toRoomEntity())
         }
         return newNote
     }
 
-    fun reorder(fromIndex: Int, toIndex: Int) {
-        Log.d("lw", "dragged note: $fromIndex reordered to index: $toIndex")
+    fun reorder(fromPosition: Int, toPosition: Int) {
+        Log.d("lw", "dragged note from position: $fromPosition reordered to position: $toPosition")
         val items = state.value
-        val from = items[fromIndex]
-        val to = items[toIndex]
-//        val newPriority = to.priority + 1
-        val updatedItem = from.copy(priority = to.priority + 1)
-        val toBeSwichedUp = (items.subList(0, toIndex)  + updatedItem).map { it.copy(priority = it.priority + 1) }
+        val from = items[fromPosition]
+        val to = items[toPosition]
+        val reorderedItem = from.copy(reversedShowIndex = to.reversedShowIndex)
+        val isReorderUp = fromPosition > toPosition
+        val switchedItems = if (isReorderUp) {
+            items.subList(toPosition, fromPosition)
+                .map { toBeSwitchedDown -> toBeSwitchedDown.copy(reversedShowIndex = toBeSwitchedDown.reversedShowIndex - 1) }
+        } else {
+            items.subList(fromPosition + 1, toPosition + 1)
+                .map { toBeSwitchedUp -> toBeSwitchedUp.copy(reversedShowIndex = toBeSwitchedUp.reversedShowIndex + 1) }
+        }
         launch {
-            notesDao.updateAll(toBeSwichedUp.map { it.toRoomEntity() })
+            (switchedItems + reorderedItem)
+                .map { updatedNote -> updatedNote.toRoomEntity() }
+                .let { updatedNotes -> notesDao.updateAll(updatedNotes) }
         }
     }
 
     private class NoteListComparator : Comparator<NoteSnapshot> {
 
         override fun compare(first: NoteSnapshot, second: NoteSnapshot): Int {
-            val byPriority = (first.priority compareTo second.priority) * -1
+            val byIndex = (first.reversedShowIndex compareTo second.reversedShowIndex) * -1
             val byLastModification = (first.lastModified.value compareTo second.lastModified.value) * -1
             return when {
-                byPriority != 0         -> byPriority
+                byIndex != 0            -> byIndex
                 byLastModification != 0 -> byLastModification
                 else                    -> {
                     (first.created.value compareTo second.created.value) * -1

@@ -14,17 +14,29 @@ data class NoteEntity(
     val timestamp: Long,
     val content: String,
     @ColumnInfo(defaultValue = LAST_MODIFIED_DEFAULT.toString()) val lastModified: Long = timestamp,
-    @ColumnInfo(defaultValue = PRIORITY_DEFAULT.toString()) val priority: Int
+    @ColumnInfo(defaultValue = REVERSED_INDEX_DEFAULT.toString()) val reversedIndex: Int
 ) : HasStableId {
     fun asNote(): NoteSnapshot =
-        NoteSnapshot(NoteId(id), created = Timestamp(timestamp), content, lastModified = Timestamp(lastModified), priority = priority)
+        NoteSnapshot(
+            NoteId(id),
+            created = Timestamp(timestamp),
+            content,
+            lastModified = Timestamp(lastModified),
+            reversedShowIndex = reversedIndex
+        )
 
     companion object {
         const val TABLE_NAME = "Notes"
         const val LAST_MODIFIED_DEFAULT = -1L
-        const val PRIORITY_DEFAULT = Int.MIN_VALUE
+        const val REVERSED_INDEX_DEFAULT = 0
     }
 }
 
 fun NoteSnapshot.toRoomEntity(): NoteEntity =
-    NoteEntity(noteId.value, timestamp = created.value, content, lastModified = lastModified.value, priority = priority)
+    NoteEntity(
+        noteId.value,
+        timestamp = created.value,
+        content,
+        lastModified = lastModified.value,
+        reversedIndex = reversedShowIndex
+    )
