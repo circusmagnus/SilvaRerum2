@@ -40,19 +40,26 @@ class NoteListModel(scope: CoroutineScope, private val notesDao: NotesDao) : Cor
         val from = items[fromPosition]
         val to = items[toPosition]
         val reorderedItem = from.copy(reversedShowIndex = to.reversedShowIndex)
-        val isReorderUp = fromPosition > toPosition
-        val switchedItems = if (isReorderUp) {
-            items.subList(toPosition, fromPosition)
-                .map { toBeSwitchedDown -> toBeSwitchedDown.copy(reversedShowIndex = toBeSwitchedDown.reversedShowIndex - 1) }
-        } else {
-            items.subList(fromPosition + 1, toPosition + 1)
-                .map { toBeSwitchedUp -> toBeSwitchedUp.copy(reversedShowIndex = toBeSwitchedUp.reversedShowIndex + 1) }
-        }
+        val switchedAwayItem = to.copy(reversedShowIndex = from.reversedShowIndex)
+        Log.d("lw", "reordered $from to $reorderedItem, swithing with $to becoming $switchedAwayItem")
+
         launch {
-            (switchedItems + reorderedItem)
-                .map { updatedNote -> updatedNote.toRoomEntity() }
-                .let { updatedNotes -> notesDao.updateAll(updatedNotes) }
+            listOf(reorderedItem.toRoomEntity(), switchedAwayItem.toRoomEntity())
+                .let { notesDao.updateAll(it) }
         }
+//        val isReorderUp = fromPosition > toPosition
+//        val switchedItems = if (isReorderUp) {
+//            items.subList(toPosition, fromPosition)
+//                .map { toBeSwitchedDown -> toBeSwitchedDown.copy(reversedShowIndex = toBeSwitchedDown.reversedShowIndex - 1) }
+//        } else {
+//            items.subList(fromPosition + 1, toPosition + 1)
+//                .map { toBeSwitchedUp -> toBeSwitchedUp.copy(reversedShowIndex = toBeSwitchedUp.reversedShowIndex + 1) }
+//        }
+//        launch {
+//            (switchedItems + reorderedItem)
+//                .map { updatedNote -> updatedNote.toRoomEntity() }
+//                .let { updatedNotes -> notesDao.updateAll(updatedNotes) }
+//        }
     }
 
     private class NoteListComparator : Comparator<NoteSnapshot> {
