@@ -9,10 +9,13 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -89,4 +92,39 @@ fun ShortNote(
 @Preview
 fun SilvaRerumHeader(modifier: Modifier = Modifier) {
     Text(modifier = modifier.padding(8.dp), text = "Silva Rerum")
+}
+
+@Composable
+@Preview
+fun ExpandableSearch(
+    isSearchActive: Boolean = true,
+    onToggle: (Boolean) -> Unit = {},
+    searchPhrase: String = "kot",
+    onSearchedPhrase: (String) -> Unit = {}
+) {
+    if (isSearchActive.not()) IconButton(onClick = { onToggle(true) }) {
+        Icon(Icons.Filled.Search, contentDescription = "search")
+    } else CloseableTextField(
+        text = searchPhrase
+    ) { phraseOrClose ->
+        if (phraseOrClose != null) {
+            onSearchedPhrase(phraseOrClose)
+        } else {
+            onToggle(false)
+        }
+    }
+}
+
+@Composable
+@Preview
+fun CloseableTextField(modifier: Modifier = Modifier, text: String = "", onEditOrClose: (String?) -> Unit = {}) {
+    Row(modifier) {
+        TextField(
+            value = text,
+            onValueChange = { newEdit -> onEditOrClose(newEdit) }
+        )
+        IconButton(onClick = { onEditOrClose(null) }) {
+            Icon(Icons.Filled.Cancel, contentDescription = "Cancel search")
+        }
+    }
 }

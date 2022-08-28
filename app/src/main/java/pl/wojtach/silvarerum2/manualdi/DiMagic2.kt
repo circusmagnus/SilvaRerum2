@@ -9,6 +9,8 @@ import pl.wojtach.silvarerum2.EditNoteModel
 import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.ReadNoteModel
 import pl.wojtach.silvarerum2.notelist.NoteListModel
+import pl.wojtach.silvarerum2.notelist.NoteListModelImpl
+import pl.wojtach.silvarerum2.notelist.SearchableListModel
 import pl.wojtach.silvarerum2.room.AppDatabase
 import pl.wojtach.silvarerum2.room.NotesDao
 
@@ -44,6 +46,7 @@ interface NotesDeps {
     fun readNoteModel(scope: CoroutineScope, noteSnapshot: NoteSnapshot): ReadNoteModel
     fun editNoteModel(scope: CoroutineScope, noteSnapshot: NoteSnapshot): EditNoteModel
     fun noteListModel(scope: CoroutineScope): NoteListModel
+    fun searchableNoteList(scope: CoroutineScope): SearchableListModel
 
     companion object {
         lateinit var container: NotesDeps
@@ -61,8 +64,12 @@ class NotesModule(private val appDeps: AppDeps) : NotesDeps {
         return EditNoteModel(scope, noteSnapshot, notesDao())
     }
 
-    override fun noteListModel(scope: CoroutineScope): NoteListModel {
-        return NoteListModel(scope, notesDao())
+    override fun noteListModel(scope: CoroutineScope): NoteListModelImpl {
+        return NoteListModelImpl(scope, notesDao())
+    }
+
+    override fun searchableNoteList(scope: CoroutineScope): SearchableListModel {
+        return SearchableListModel(noteListModel(scope))
     }
 }
 
