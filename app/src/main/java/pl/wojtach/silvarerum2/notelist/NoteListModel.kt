@@ -1,4 +1,4 @@
-package pl.wojtach.silvarerum2
+package pl.wojtach.silvarerum2.notelist
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import pl.wojtach.silvarerum2.NoteId
+import pl.wojtach.silvarerum2.NoteSnapshot
+import pl.wojtach.silvarerum2.Timestamp
 import pl.wojtach.silvarerum2.room.NotesDao
 import pl.wojtach.silvarerum2.room.toRoomEntity
 import java.util.UUID

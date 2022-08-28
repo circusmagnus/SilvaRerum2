@@ -1,4 +1,4 @@
-package pl.wojtach.silvarerum2
+package pl.wojtach.silvarerum2.notelist
 
 import android.util.Log
 import androidx.compose.material.Scaffold
@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddButton

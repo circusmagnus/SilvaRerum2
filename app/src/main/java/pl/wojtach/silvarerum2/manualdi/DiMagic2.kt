@@ -6,9 +6,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import pl.wojtach.silvarerum2.EditNoteModel
-import pl.wojtach.silvarerum2.NoteListModel
 import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.ReadNoteModel
+import pl.wojtach.silvarerum2.notelist.NoteListModel
 import pl.wojtach.silvarerum2.room.AppDatabase
 import pl.wojtach.silvarerum2.room.NotesDao
 
