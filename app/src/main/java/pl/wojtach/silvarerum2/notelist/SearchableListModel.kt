@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -16,7 +15,6 @@ class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel 
     private val applicableSearch = currentSearchPhrase
         .filter { it == null || (it.length in 1..2).not() }
         .map { phrase -> if (phrase?.length == 0) null else phrase }
-        .debounce(500)
 
     override val state: StateFlow<List<NoteSnapshot>> = baseModel.state
         .combine(applicableSearch) { notes, searchPhrase ->
