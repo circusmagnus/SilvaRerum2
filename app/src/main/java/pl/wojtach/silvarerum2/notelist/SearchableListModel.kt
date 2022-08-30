@@ -19,7 +19,7 @@ class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel 
     override val state: StateFlow<List<NoteSnapshot>> = baseModel.state
         .combine(applicableSearch) { notes, searchPhrase ->
             if (searchPhrase == null) notes
-            else notes.filter { note -> note.content.contains(searchPhrase) }
+            else notes.filter { note -> note.content.contains(searchPhrase, ignoreCase = true) }
         }.stateIn(baseModel, started = SharingStarted.WhileSubscribed(), initialValue = emptyList())
 
     fun searchFor(phrase: String?) {
