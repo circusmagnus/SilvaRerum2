@@ -9,12 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.NoteSnapshot
-import pl.wojtach.silvarerum2.manualdi.notesDeps
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddButton
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
@@ -25,10 +23,8 @@ import pl.wojtach.silvarerum2.widgets.ShortNote
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
-fun NoteListScreen(onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot) -> Unit, onNoteEdit: (NoteSnapshot) -> Unit) {
+fun NoteListScreen(model: SearchableListModel, onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot) -> Unit, onNoteEdit: (NoteSnapshot) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val scope = rememberCoroutineScope()
-    val model = remember(key1 = scope) { notesDeps().searchableNoteList(scope) }
     val currentList by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     val listCellFactory: @Composable (Modifier, NoteSnapshot) -> Unit = { modifier, note ->
