@@ -14,6 +14,7 @@ import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
 import pl.wojtach.silvarerum2.parcels.toParcel
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
+import pl.wojtach.silvarerum2.utils.parcelable
 
 class MainActivity : ComponentActivity() {
 
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         navigationModel =
             if (savedInstanceState != null) {
-                savedInstanceState.getParcelable<ParcelizedNavigationModel>(NAV_MODEL_KEY)
+                savedInstanceState.parcelable<ParcelizedNavigationModel>(NAV_MODEL_KEY)
                     ?.toNavigationModel()
                     ?: NavigationModel()
             } else NavigationModel()
