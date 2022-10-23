@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.wojtach.silvarerum2.manualdi.notesDeps
+import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 import pl.wojtach.silvarerum2.widgets.UndoButton
 
@@ -22,7 +22,7 @@ fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
 
     Log.d("lw", "EditNoteScreen composed")
     val scope = rememberCoroutineScope()
-    val model = remember(key1 = scope) { notesDeps().editNoteModel(scope, noteSnapshot) }
+    val model = remember(key1 = scope) { notesComponent().editNoteModel(scope, noteSnapshot) }
 
     val viewState by model.state
 

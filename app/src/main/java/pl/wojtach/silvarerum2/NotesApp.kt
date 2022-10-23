@@ -2,11 +2,11 @@ package pl.wojtach.silvarerum2
 
 import android.app.Application
 import android.os.StrictMode
-import pl.wojtach.silvarerum2.manualdi.AppDeps
+import pl.wojtach.silvarerum2.manualdi.AppComponent
 import pl.wojtach.silvarerum2.manualdi.AppModule
-import pl.wojtach.silvarerum2.manualdi.NotesDeps
+import pl.wojtach.silvarerum2.manualdi.NotesComponent
 import pl.wojtach.silvarerum2.manualdi.NotesModule
-import pl.wojtach.silvarerum2.manualdi.appDeps
+import pl.wojtach.silvarerum2.manualdi.appComponent
 
 class NotesApp: Application() {
 
@@ -16,7 +16,7 @@ class NotesApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        AppDeps.container = AppModule(this)
-        NotesDeps.container = NotesModule(appDeps())
+        AppComponent.container = AppModule(this)
+        NotesComponent.container = NotesModule(appComponent())
     }
 }

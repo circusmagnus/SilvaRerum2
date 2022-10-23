@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import pl.wojtach.silvarerum2.manualdi.notesDeps
+import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.notelist.NoteListScreen
 import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
 import pl.wojtach.silvarerum2.parcels.toParcel
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun Navigation(navigationModel: NavigationModel, destination: Destination) {
         val scope = rememberCoroutineScope()
-        val model = remember(key1 = scope) { notesDeps().searchableNoteList(scope) }
+        val model = remember(key1 = scope) { notesComponent().searchableNoteList(scope) }
         when (destination) {
             Destination.NoteList -> NoteListScreen(
                 model = model,

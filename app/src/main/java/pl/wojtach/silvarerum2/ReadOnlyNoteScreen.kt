@@ -13,7 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import pl.wojtach.silvarerum2.manualdi.notesDeps
+import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
@@ -22,7 +22,7 @@ import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 @Composable
 fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, onDeletion: () -> Unit) {
     val scope = rememberCoroutineScope()
-    val model = remember(key1 = scope) { notesDeps().readNoteModel(scope, note) }
+    val model = remember(key1 = scope) { notesComponent().readNoteModel(scope, note) }
     val lifecycleOwner = LocalLifecycleOwner.current
     val currentNote by model.state.collectWhileStarted(lifecycleOwner)
 
