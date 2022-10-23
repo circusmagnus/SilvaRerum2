@@ -3,6 +3,7 @@ package pl.wojtach.silvarerum2
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -28,6 +29,8 @@ class MainActivity : ComponentActivity() {
                     ?.toNavigationModel()
                     ?: NavigationModel()
             } else NavigationModel()
+
+        setupBackPress()
 
         setContent {
             SilvaRerum2Theme {
@@ -69,12 +72,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (navigationModel.popBackstack().not()) super.onBackPressed()
+    private fun setupBackPress(){
+        val callback = object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if(!navigationModel.popBackstack()) {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
 
     companion object {
-        const val TAG = "MainActivity"
         const val NAV_MODEL_KEY = "NavModelKey"
     }
 }
