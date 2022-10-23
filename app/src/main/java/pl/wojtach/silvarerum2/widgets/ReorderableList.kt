@@ -38,9 +38,9 @@ fun <T : HasStableId> ReorderableList(
         state = state.lazyListState
     ) {
         itemsIndexed(
-            reorderableItems,
-            { _, item -> item.id },
-            { index, item ->
+            items = reorderableItems,
+            key = { _, item -> item.id },
+            itemContent = { index, item ->
                 ListCell(
                     Modifier
                         .graphicsLayer {
