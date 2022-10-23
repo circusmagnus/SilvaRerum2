@@ -6,7 +6,8 @@ plugins {
     id("kotlin-parcelize")
 }
 
-val composeVersion = "1.1.1"
+val composeVersion = "1.2.1"
+val composeCompiler = "1.3.2"
 
 android {
     compileSdk = 33
@@ -51,7 +52,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = composeVersion
+        kotlinCompilerExtensionVersion = composeCompiler
     }
     packagingOptions {
         resources {
@@ -71,12 +72,12 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("androidx.compose.material:material-icons-extended:$composeVersion")
 
-    val room_version = "2.4.2"
-    implementation ("androidx.room:room-runtime:$room_version")
-    annotationProcessor ("androidx.room:room-compiler:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    val roomVersion = "2.4.3"
+    implementation ("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor ("androidx.room:room-compiler:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
 //    ksp ("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     testImplementation ("junit:junit:4.13.2")
     androidTestImplementation ("androidx.test.ext:junit:1.1.3")
