@@ -46,7 +46,7 @@ fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButt
 
             }
         }
-    ) {
-        SelectionContainer { Text(text = content) }
+    ) { padding ->
+        SelectionContainer(Modifier.padding(padding)) { Text(text = content) }
     }
 }

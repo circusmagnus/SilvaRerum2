@@ -1,6 +1,7 @@
 package pl.wojtach.silvarerum2
 
 import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -27,13 +28,19 @@ fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
     val viewState by model.state
 
     EditNoteLayout(
-        EditNoteField = { TextField(value = viewState.note.content, onValueChange = model::edit, label = { Text("Treść") }) },
+        EditNoteField = { padding ->
+            TextField(
+                modifier = Modifier.padding(padding),
+                value = viewState.note.content,
+                onValueChange = model::edit,
+                label = { Text("Treść") })
+        },
         UndoButton = { if (viewState.undoEnabled) UndoButton(model::undo) else Unit }
     )
 }
 
 @Composable
-fun EditNoteLayout(UndoButton: @Composable () -> Unit, EditNoteField: @Composable () -> Unit) {
+fun EditNoteLayout(UndoButton: @Composable () -> Unit, EditNoteField: @Composable (PaddingValues) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar {
@@ -43,6 +50,6 @@ fun EditNoteLayout(UndoButton: @Composable () -> Unit, EditNoteField: @Composabl
                 }
             }
         },
-        content = { EditNoteField() }
+        content = { paddingValues -> EditNoteField(paddingValues) }
     )
 }
