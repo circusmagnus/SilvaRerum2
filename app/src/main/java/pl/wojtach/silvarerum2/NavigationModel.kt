@@ -9,7 +9,7 @@ class NavigationModel(initialDestination: Destination = Destination.NoteList, ba
     val state: StateFlow<Destination> get() = _state
 
     private val prevDestinations = ArrayDeque<Destination>(5).apply {
-        for(element in backstack) this.addLast(element)
+        for (element in backstack) this.addLast(element)
     }
 
     val backStack: List<Destination> get() = prevDestinations.toList()
@@ -19,19 +19,14 @@ class NavigationModel(initialDestination: Destination = Destination.NoteList, ba
         _state.tryEmit(destination)
     }
 
-    fun popBackstack(upTo: String? = null): Boolean = when {
-        prevDestinations.isEmpty() -> false
-        else                       -> popUpTo(upTo)
-    }
-
-    private tailrec fun popUpTo(name: String?): Boolean =
+    tailrec fun popBackstack(upTo: String? = null): Boolean =
         if (prevDestinations.isEmpty()) false
         else {
             val next = prevDestinations.removeFirst()
-            if (name == null || next.name == name) {
+            if (upTo == null || next.name == upTo) {
                 _state.tryEmit(next)
                 true
-            } else popUpTo(name)
+            } else popBackstack(upTo)
         }
 }
 
