@@ -6,8 +6,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.notelist.NoteListScreen
@@ -15,23 +19,11 @@ import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
 import pl.wojtach.silvarerum2.parcels.toParcel
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
-import pl.wojtach.silvarerum2.utils.parcelable
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var navigationModel: NavigationModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navigationModel =
-            if (savedInstanceState != null) {
-                savedInstanceState.parcelable<ParcelizedNavigationModel>(NAV_MODEL_KEY)
-                    ?.toNavigationModel()
-                    ?: NavigationModel()
-            } else NavigationModel()
-
-        setupBackPress()
-
         setContent {
             SilvaRerum2Theme {
                 MainScreen()
@@ -39,14 +31,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putParcelable(NAV_MODEL_KEY, navigationModel.toParcel())
-        super.onSaveInstanceState(outState)
-    }
-
     @Composable
     private fun MainScreen() {
         Log.d("lw", "MainScreen composed")
+        val navigationSaver = object : Saver<NavigationModel, ParcelizedNavigationModel> {
+            override fun restore(value: ParcelizedNavigationModel): NavigationModel = value.toNavigationModel()
+
+            override fun SaverScope.save(value: NavigationModel): ParcelizedNavigationModel = value.toParcel()
+        }
+        val (navigationModel, _) = rememberSaveable(stateSaver = navigationSaver) {
+            mutableStateOf(NavigationModel())
+        }
         val lifecycleOwner = LocalLifecycleOwner.current
         val currentDestination = navigationModel.state.collectWhileStarted(lifecycleOwner)
         Navigation(navigationModel = navigationModel, destination = currentDestination.value)
@@ -54,6 +49,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun Navigation(navigationModel: NavigationModel, destination: Destination) {
+        setupBackPress(navigationModel)
         val scope = rememberCoroutineScope()
         val model = remember(key1 = scope) { notesComponent().searchableNoteList(scope) }
         when (destination) {
@@ -72,19 +68,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setupBackPress(){
-        val callback = object: OnBackPressedCallback(true) {
+    private fun setupBackPress(navigationModel: NavigationModel) {
+        val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if(!navigationModel.popBackstack()) {
+                if (!navigationModel.popBackstack()) {
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
                 }
             }
         }
         onBackPressedDispatcher.addCallback(this, callback)
-    }
-
-    companion object {
-        const val NAV_MODEL_KEY = "NavModelKey"
     }
 }
