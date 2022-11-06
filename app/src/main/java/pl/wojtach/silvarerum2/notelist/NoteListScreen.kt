@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.NoteSnapshot
-import pl.wojtach.silvarerum2.utils.collectWhileStarted
+import pl.wojtach.silvarerum2.ui.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddButton
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton

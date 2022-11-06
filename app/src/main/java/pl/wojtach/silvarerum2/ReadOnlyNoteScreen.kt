@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import pl.wojtach.silvarerum2.manualdi.notesComponent
-import pl.wojtach.silvarerum2.utils.collectWhileStarted
+import pl.wojtach.silvarerum2.ui.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader

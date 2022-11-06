@@ -17,8 +17,8 @@ import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.notelist.NoteListScreen
 import pl.wojtach.silvarerum2.parcels.ParcelizedNavigationModel
 import pl.wojtach.silvarerum2.parcels.toParcel
+import pl.wojtach.silvarerum2.ui.collectWhileStarted
 import pl.wojtach.silvarerum2.ui.theme.SilvaRerum2Theme
-import pl.wojtach.silvarerum2.utils.collectWhileStarted
 
 class MainActivity : ComponentActivity() {
 

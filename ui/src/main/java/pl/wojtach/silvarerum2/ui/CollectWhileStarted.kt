@@ -1,4 +1,4 @@
-package pl.wojtach.silvarerum2.utils
+package pl.wojtach.silvarerum2.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable

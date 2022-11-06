@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "Silva Rerum 2"
 include ':app'
 include ':util'
+include ':ui'
