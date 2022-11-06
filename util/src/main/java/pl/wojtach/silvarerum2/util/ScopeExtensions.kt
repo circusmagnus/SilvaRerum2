@@ -1,4 +1,4 @@
-package pl.wojtach.silvarerum2.utils
+package pl.wojtach.silvarerum2.util
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job

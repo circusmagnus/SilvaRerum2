@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import pl.wojtach.silvarerum2.NoteId
 import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.Timestamp
-import pl.wojtach.silvarerum2.utils.HasStableId
+import pl.wojtach.silvarerum2.util.HasStableId
 
 @Entity(tableName = NoteEntity.TABLE_NAME)
 data class NoteEntity(

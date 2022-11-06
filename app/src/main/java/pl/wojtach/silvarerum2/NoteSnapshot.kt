@@ -1,6 +1,6 @@
 package pl.wojtach.silvarerum2
 
-import pl.wojtach.silvarerum2.utils.HasStableId
+import pl.wojtach.silvarerum2.util.HasStableId
 
 data class NoteSnapshot(
     val noteId: NoteId,

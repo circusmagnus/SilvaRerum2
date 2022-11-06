@@ -16,7 +16,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
-import pl.wojtach.silvarerum2.utils.HasStableId
+import pl.wojtach.silvarerum2.util.HasStableId
 import kotlin.math.roundToInt
 
 @Composable
