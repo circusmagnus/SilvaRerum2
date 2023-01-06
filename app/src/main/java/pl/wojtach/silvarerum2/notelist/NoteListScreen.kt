@@ -23,9 +23,14 @@ import pl.wojtach.silvarerum2.widgets.ShortNote
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
-fun NoteListScreen(model: SearchableListModel, onNoteClick: (NoteSnapshot) -> Unit, onNoteAdd: (NoteSnapshot) -> Unit, onNoteEdit: (NoteSnapshot) -> Unit) {
+fun NoteListScreen(
+    model: SearchableListModel,
+    onNoteClick: (NoteSnapshot) -> Unit,
+    onNoteAdd: (NoteSnapshot) -> Unit,
+    onNoteEdit: (NoteSnapshot) -> Unit
+) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val currentList by model.state.collectWhileStarted(lifecycleOwner = lifecycleOwner)
+    val state by model.searchedState.collectWhileStarted(lifecycleOwner = lifecycleOwner)
 
     val listCellFactory: @Composable (Modifier, NoteSnapshot) -> Unit = { modifier, note ->
         ShortNote(
@@ -40,10 +45,21 @@ fun NoteListScreen(model: SearchableListModel, onNoteClick: (NoteSnapshot) -> Un
     Log.d("lw", "NoteListScreen composed")
 
     NoteListLayout(
-        topBar = { TopAppBar { NoteListHeader(model) } },
+        topBar = {
+            TopAppBar {
+                NoteListHeader(
+                    isSearchActive = state.searchState.isActive,
+                    searchedPhrase = state.searchState.phrase,
+                    onToggle = { isActive ->
+                        if (isActive) model.searchFor("") else model.searchFor(null)
+                    },
+                    onSearchedPhrase = { phrase -> model.searchFor(phrase) }
+                )
+            }
+        },
         noteListUi = {
             ReorderableList(
-                reorderableItems = currentList,
+                reorderableItems = state.notes,
                 ListCell = listCellFactory,
                 onReorder = { fromIndex, toIndex -> model.reorder(fromIndex, toIndex) }
             )
@@ -70,9 +86,14 @@ fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable () ->
 }
 
 @Composable
-fun NoteListHeader(searchableListModel: SearchableListModel) {
-    var isSearchActive by remember { mutableStateOf(false) }
-    var searchedPhrase by remember { mutableStateOf("") }
+fun NoteListHeader(
+    isSearchActive: Boolean,
+    searchedPhrase: String,
+    onToggle: (Boolean) -> Unit,
+    onSearchedPhrase: (String) -> Unit
+) {
+
+    var localSearch by remember { mutableStateOf(searchedPhrase) }
 
     Row {
         if (!isSearchActive) {
@@ -83,15 +104,14 @@ fun NoteListHeader(searchableListModel: SearchableListModel) {
             isSearchActive,
             onToggle = { isActive ->
                 if (!isActive) {
-                    searchableListModel.searchFor(null)
-                    searchedPhrase = ""
+                    localSearch = ""
                 }
-                isSearchActive = isActive
+                onToggle(isActive)
             },
-            searchPhrase = searchedPhrase,
+            searchPhrase = localSearch,
             onSearchedPhrase = { phrase ->
-                searchedPhrase = phrase
-                searchableListModel.searchFor(phrase)
+                localSearch = phrase
+                onSearchedPhrase(phrase)
             }
         )
     }
