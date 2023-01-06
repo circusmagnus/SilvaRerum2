@@ -26,11 +26,10 @@ class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel 
         notes.filter { note -> note.content.contains(searchState.phrase, ignoreCase = true) }
     }
 
-    private fun shouldFilter(searchState: SearchState) =
-        searchState.isActive && searchState.phrase.length > 2
+    private fun shouldFilter(searchState: SearchState) = searchState.phrase.length > 2
 
-    fun searchFor(phrase: String?) {
-        currentSearchState.value = if (phrase != null) SearchState(true, phrase) else SearchState(false, "")
+    fun searchFor(phrase: String) {
+        currentSearchState.value = SearchState(phrase)
     }
 }
 
@@ -40,6 +39,5 @@ data class NoteListState(
 )
 
 data class SearchState(
-    val isActive: Boolean = false,
     val phrase: String = "",
 )

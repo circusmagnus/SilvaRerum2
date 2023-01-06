@@ -48,11 +48,7 @@ fun NoteListScreen(
         topBar = {
             TopAppBar {
                 NoteListHeader(
-                    isSearchActive = state.searchState.isActive,
                     searchedPhrase = state.searchState.phrase,
-                    onToggle = { isActive ->
-                        if (isActive) model.searchFor("") else model.searchFor(null)
-                    },
                     onSearchedPhrase = { phrase -> model.searchFor(phrase) }
                 )
             }
@@ -87,13 +83,13 @@ fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable () ->
 
 @Composable
 fun NoteListHeader(
-    isSearchActive: Boolean,
     searchedPhrase: String,
-    onToggle: (Boolean) -> Unit,
     onSearchedPhrase: (String) -> Unit
 ) {
-
     var localSearch by remember { mutableStateOf(searchedPhrase) }
+    var isSearchActive by remember {
+        mutableStateOf(searchedPhrase.isNotEmpty())
+    }
 
     Row {
         if (!isSearchActive) {
@@ -105,8 +101,9 @@ fun NoteListHeader(
             onToggle = { isActive ->
                 if (!isActive) {
                     localSearch = ""
+                    onSearchedPhrase("")
                 }
-                onToggle(isActive)
+                isSearchActive = isActive
             },
             searchPhrase = localSearch,
             onSearchedPhrase = { phrase ->
