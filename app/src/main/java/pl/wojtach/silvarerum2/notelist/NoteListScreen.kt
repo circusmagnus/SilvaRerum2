@@ -87,9 +87,7 @@ fun NoteListHeader(
     onSearchedPhrase: (String) -> Unit
 ) {
     var localSearch by remember { mutableStateOf(searchedPhrase) }
-    var isSearchActive by remember {
-        mutableStateOf(searchedPhrase.isNotEmpty())
-    }
+    var isSearchActive by remember { mutableStateOf(searchedPhrase.isNotEmpty()) }
 
     Row {
         if (!isSearchActive) {
