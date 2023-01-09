@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -13,13 +14,17 @@ import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Undo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -41,9 +46,25 @@ fun AddButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
 
 @Composable
 @Preview
-fun DeleteNoteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
-    IconButton(onClick = onClick) {
-        Icon(Icons.Filled.Delete, contentDescription = "delete")
+fun DeleteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+    var showingDialog by remember { mutableStateOf(false) }
+
+    IconButton(
+        onClick = {
+            showingDialog = true
+        },
+        content = {
+            Icon(Icons.Filled.Delete, contentDescription = "delete")
+        }
+    )
+
+    if (showingDialog) {
+        AlertDialog(
+            title = { Text(text = "Delete?") },
+            onDismissRequest = { showingDialog = false },
+            dismissButton = { UndoButton { showingDialog = false } },
+            confirmButton = { OkButton { showingDialog = false; onClick() } }
+        )
     }
 }
 
@@ -60,6 +81,14 @@ fun EditNoteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
 fun UndoButton(onClick: () -> Unit = {}) {
     IconButton(onClick = onClick) {
         Icon(Icons.Filled.Undo, contentDescription = "undo")
+    }
+}
+
+@Composable
+@Preview
+fun OkButton(onClick: () -> Unit = {}) {
+    IconButton(onClick = onClick) {
+        Icon(Icons.Filled.Check, contentDescription = "check")
     }
 }
 

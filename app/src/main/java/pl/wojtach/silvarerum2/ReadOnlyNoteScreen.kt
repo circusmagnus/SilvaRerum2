@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import pl.wojtach.silvarerum2.manualdi.notesComponent
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
-import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
+import pl.wojtach.silvarerum2.widgets.DeleteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
@@ -29,7 +29,7 @@ fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, on
     ReadOnlyNote(
         content = currentNote.content,
         EditButton = { EditNoteButton { toEditing(currentNote) } },
-        DeleteButton = { DeleteNoteButton { model.delete(); onDeletion() } }
+        DeleteButton = { DeleteButton { model.delete(); onDeletion() } }
     )
 }
 

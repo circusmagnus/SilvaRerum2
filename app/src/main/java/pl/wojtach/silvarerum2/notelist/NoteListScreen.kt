@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.NoteSnapshot
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddButton
-import pl.wojtach.silvarerum2.widgets.DeleteNoteButton
+import pl.wojtach.silvarerum2.widgets.DeleteButton
 import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.ExpandableSearch
 import pl.wojtach.silvarerum2.widgets.ReorderableList
@@ -37,7 +37,7 @@ fun NoteListScreen(
             modifier = modifier,
             note = note,
             onClick = { onNoteClick(note) },
-            DeleteButton = { DeleteNoteButton { model.delete(note) } },
+            DeleteButton = { DeleteButton { model.delete(note) } },
             EditButton = { EditNoteButton { onNoteEdit(note) } }
         )
     }
