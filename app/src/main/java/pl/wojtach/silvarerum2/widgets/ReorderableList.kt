@@ -21,6 +21,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun <T : HasStableId> ReorderableList(
+    modifier: Modifier = Modifier,
     reorderableItems: List<T>,
     ListCell: @Composable (Modifier, T) -> Unit,
     onReorder: (fromIndex: Int, toIndex: Int) -> Unit
@@ -28,7 +29,7 @@ fun <T : HasStableId> ReorderableList(
     val state = rememberReorderableListState(onReorder = onReorder)
 
     LazyColumn(
-        modifier = Modifier.pointerInput(key1 = Unit) {
+        modifier = modifier.pointerInput(key1 = Unit) {
             detectDragGesturesAfterLongPress(
                 onDragStart = { offset -> state.onDragStart(offset) },
                 onDrag = { _, dragAmount -> state.onDrag(dragAmount) },

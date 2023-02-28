@@ -1,11 +1,14 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package pl.wojtach.silvarerum2
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -37,7 +40,7 @@ fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, on
 fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButton: @Composable () -> Unit) {
     Scaffold(
         topBar = {
-            TopAppBar {
+            TopAppBar(title = {
                 Row(modifier = Modifier.padding(8.dp)) {
                     SilvaRerumHeader(modifier = Modifier.weight(1f, fill = true))
                     DeleteButton()
@@ -45,6 +48,7 @@ fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButt
                 }
 
             }
+            )
         }
     ) { padding ->
         SelectionContainer(Modifier.padding(padding)) { Text(text = content) }

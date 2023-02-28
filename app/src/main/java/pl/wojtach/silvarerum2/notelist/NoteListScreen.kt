@@ -1,10 +1,15 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package pl.wojtach.silvarerum2.notelist
 
 import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,15 +51,17 @@ fun NoteListScreen(
 
     NoteListLayout(
         topBar = {
-            TopAppBar {
+            TopAppBar(title = {
                 NoteListHeader(
                     searchedPhrase = state.searchState.phrase,
                     onSearchedPhrase = { phrase -> model.searchFor(phrase) }
                 )
             }
+            )
         },
-        noteListUi = {
+        noteListUi = { paddingValues ->
             ReorderableList(
+                Modifier.padding(paddingValues),
                 reorderableItems = state.notes,
                 ListCell = listCellFactory,
                 onReorder = { fromIndex, toIndex -> model.reorder(fromIndex, toIndex) }
@@ -70,14 +77,14 @@ fun NoteListScreen(
 }
 
 @Composable
-fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable () -> Unit, floatingButton: @Composable () -> Unit) {
+fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable (PaddingValues) -> Unit, floatingButton: @Composable () -> Unit) {
 
     Log.d("lw", "NoteListLayout composed")
 
     Scaffold(
         topBar = topBar,
         floatingActionButton = floatingButton,
-        content = { noteListUi() }
+        content = { paddingValues ->  noteListUi(paddingValues) }
     )
 }
 

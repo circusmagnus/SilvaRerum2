@@ -1,16 +1,11 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package pl.wojtach.silvarerum2.widgets
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Card
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Cancel
@@ -19,6 +14,14 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Undo
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,8 +41,8 @@ import pl.wojtach.silvarerum2.Timestamp
 
 @Composable
 @Preview
-fun AddButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
-    FloatingActionButton(onClick = onClick, modifier = modifier) {
+fun AddButton(onClick: () -> Unit = {}) {
+    FloatingActionButton(onClick = onClick) {
         Icon(Icons.Filled.Add, contentDescription = "Add note")
     }
 }
