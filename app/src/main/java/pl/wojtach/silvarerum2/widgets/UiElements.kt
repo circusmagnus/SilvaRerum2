@@ -2,6 +2,7 @@
 
 package pl.wojtach.silvarerum2.widgets
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -61,7 +62,7 @@ fun DeleteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
         }
     )
 
-    if (showingDialog) {
+    AnimatedVisibility (showingDialog) {
         AlertDialog(
             title = { Text(text = "Delete?") },
             onDismissRequest = { showingDialog = false },
