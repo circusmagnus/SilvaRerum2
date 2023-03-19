@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import pl.wojtach.silvarerum2.room.NotesDao
 import pl.wojtach.silvarerum2.room.toRoomEntity
 
-class ReadNoteModel(scope: CoroutineScope, private val note: NoteSnapshot, private val notesDao: NotesDao) : CoroutineScope by scope {
+internal class ReadNoteModel(scope: CoroutineScope, private val note: NoteSnapshot, private val notesDao: NotesDao) : CoroutineScope by scope {
 
     val state: StateFlow<NoteSnapshot> = notesDao
         .getById(note.noteId.value)

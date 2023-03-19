@@ -28,7 +28,7 @@ import pl.wojtach.silvarerum2.widgets.ShortNote
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
-fun NoteListScreen(
+internal fun NoteListScreen(
     model: SearchableListModel,
     onNoteClick: (NoteSnapshot) -> Unit,
     onNoteAdd: (NoteSnapshot) -> Unit,

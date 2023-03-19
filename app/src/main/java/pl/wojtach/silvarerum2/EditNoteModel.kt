@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import pl.wojtach.silvarerum2.room.NotesDao
 import pl.wojtach.silvarerum2.room.toRoomEntity
 
-class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notesDao: NotesDao) :
+internal class EditNoteModel(scope: CoroutineScope, note: NoteSnapshot, private val notesDao: NotesDao) :
     CoroutineScope by scope {
 
     private val previousEdits = ArrayDeque<String>(20)

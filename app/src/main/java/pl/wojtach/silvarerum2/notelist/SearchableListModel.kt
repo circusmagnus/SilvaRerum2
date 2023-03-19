@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 import pl.wojtach.silvarerum2.NoteSnapshot
 
-class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel by baseModel {
+internal class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel by baseModel {
 
     private val currentSearchState = MutableStateFlow(SearchState())
 //    private val applicableSearch = currentSearchPhrase
