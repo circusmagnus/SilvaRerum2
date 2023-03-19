@@ -13,7 +13,6 @@ interface NotesComponent {
     fun readNoteModel(scope: CoroutineScope, noteSnapshot: NoteSnapshot): ReadNoteModel
     fun editNoteModel(scope: CoroutineScope, noteSnapshot: NoteSnapshot): EditNoteModel
     fun noteListModel(scope: CoroutineScope): NoteListModel
-    fun searchableNoteList(scope: CoroutineScope): SearchableListModel
 
     companion object {
         lateinit var container: NotesComponent

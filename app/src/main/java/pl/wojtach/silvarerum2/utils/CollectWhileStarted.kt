@@ -23,7 +23,7 @@ fun <T> StateFlow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner): State<
 )
 
 @Composable
-fun <T> Flow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner, initialValue: T?): State<T?> = produceState(
+fun <T> Flow<T>.collectWhileStarted(lifecycleOwner: LifecycleOwner, initialValue: T): State<T> = produceState(
     initialValue = initialValue,
     key1 = lifecycleOwner,
     key2 = initialValue,

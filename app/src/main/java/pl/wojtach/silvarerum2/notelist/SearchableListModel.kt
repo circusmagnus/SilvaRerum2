@@ -1,43 +1,58 @@
 package pl.wojtach.silvarerum2.notelist
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import pl.wojtach.silvarerum2.NoteSnapshot
+import pl.wojtach.silvarerum2.notelist.SearchableListModel.Search
 
-class SearchableListModel(private val baseModel: NoteListModel) : NoteListModel by baseModel {
-
-    private val currentSearchState = MutableStateFlow(SearchState())
-//    private val applicableSearch = currentSearchPhrase
-//        .filter { it == null || (it.length in 1..2).not() }
-//        .map { phrase -> if (phrase?.length == 0) null else phrase }
-
-    val searchedState: StateFlow<NoteListState> = baseModel.state
-        .combine(currentSearchState) { allNotes, searchState ->
-            if (shouldFilter(searchState)) NoteListState(searchState, applySearch(allNotes, searchState))
-            else NoteListState(searchState, allNotes)
-        }.stateIn(baseModel, started = SharingStarted.WhileSubscribed(), initialValue = NoteListState())
-
-    private suspend fun applySearch(notes: List<NoteSnapshot>, searchState: SearchState) = withContext(Dispatchers.Default) {
-        notes.filter { note -> note.content.contains(searchState.phrase, ignoreCase = true) }
-    }
-
-    private fun shouldFilter(searchState: SearchState) = searchState.phrase.length > 2
-
-    fun searchFor(phrase: String) {
-        currentSearchState.value = SearchState(phrase)
-    }
+@Composable
+fun rememberSearch(noteList: Flow<List<NoteSnapshot>>, initialState: Search) = remember(
+    key1 = noteList
+) {
+    SearchableListModel(noteList, initialState)
 }
 
-data class NoteListState(
-    val searchState: SearchState = SearchState(),
-    val notes: List<NoteSnapshot> = emptyList()
-)
+class SearchableListModel(
+    noteList: Flow<List<NoteSnapshot>>,
+    initialState: Search = Search()
+) {
 
-data class SearchState(
-    val phrase: String = "",
-)
+    private val searchState = MutableStateFlow(initialState)
+
+    val searched: Flow<List<NoteSnapshot>> = noteList.combine(searchState) { allNotes, search ->
+        val (isActive, phrase) = search
+
+        if (shouldFilter(isActive, phrase)) applySearch(allNotes, phrase) else allNotes
+    }
+
+    private suspend fun applySearch(notes: List<NoteSnapshot>, phrase: String) =
+        withContext(Dispatchers.Default) {
+            notes.filter { note -> note.content.contains(phrase, ignoreCase = true) }
+        }
+
+    private fun shouldFilter(isActive: Boolean, phrase: String) = isActive && phrase.length > 2
+
+    fun searchFor(phrase: String) {
+        searchState.update { it.copy(phrase = phrase) }
+    }
+
+    fun setActive() {
+        searchState.update { it.copy(isActive = true) }
+    }
+
+    fun disable() {
+        searchState.update { it.copy(isActive = false) }
+    }
+
+    data class Search(
+        val isActive: Boolean = false,
+        val phrase: String = "",
+    )
+}

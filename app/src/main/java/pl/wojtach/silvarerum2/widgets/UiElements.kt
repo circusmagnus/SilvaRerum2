@@ -6,6 +6,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -62,7 +63,7 @@ fun DeleteButton(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
         }
     )
 
-    AnimatedVisibility (showingDialog) {
+    AnimatedVisibility(showingDialog) {
         AlertDialog(
             title = { Text(text = "Delete?") },
             onDismissRequest = { showingDialog = false },
@@ -112,7 +113,10 @@ fun ShortNote(
     Card(modifier = modifier, border = BorderStroke(1.dp, color = Color.Black)) {
         Row(Modifier.clickable { onClick() }) {
             Text(
-                text = note.content, maxLines = 2, overflow = TextOverflow.Ellipsis, modifier = Modifier
+                text = note.content,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
                     .padding(8.dp)
                     .weight(4f, true)
             )
@@ -139,22 +143,36 @@ fun ExpandableSearch(
     searchPhrase: String = "kot",
     onSearchedPhrase: (String) -> Unit = {}
 ) {
-    if (isSearchActive.not()) IconButton(onClick = { onToggle(true) }) {
-        Icon(Icons.Filled.Search, contentDescription = "search")
-    } else CloseableTextField(
-        text = searchPhrase
-    ) { phraseOrClose ->
-        if (phraseOrClose != null) {
-            onSearchedPhrase(phraseOrClose)
-        } else {
-            onToggle(false)
+    if (isSearchActive.not()) {
+        IconButton(onClick = { onToggle(true) }) {
+            Icon(Icons.Filled.Search, contentDescription = "search")
+        }
+    } else {
+        val focusRequester = remember { FocusRequester() }
+        Row() {
+            TextField(
+                modifier = Modifier.focusRequester(focusRequester),
+                value = searchPhrase,
+                onValueChange = onSearchedPhrase,
+            )
+
+            IconButton(onClick = { onToggle(false) }) {
+                Icon(Icons.Filled.Cancel, contentDescription = "Cancel search")
+            }
+        }
+        LaunchedEffect(key1 = isSearchActive) {
+            focusRequester.requestFocus()
         }
     }
 }
 
 @Composable
 @Preview
-fun CloseableTextField(modifier: Modifier = Modifier, text: String = "", onEditOrClose: (String?) -> Unit = {}) {
+fun CloseableTextField(
+    modifier: Modifier = Modifier,
+    text: String = "",
+    onEditOrClose: (String?) -> Unit = {}
+) {
     val focusRequester: FocusRequester = remember { FocusRequester() }
     Row(modifier) {
         TextField(

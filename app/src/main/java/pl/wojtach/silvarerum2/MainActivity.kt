@@ -51,9 +51,9 @@ class MainActivity : ComponentActivity() {
     private fun Navigation(navigationModel: NavigationModel, destination: Destination) {
         setupBackPress(navigationModel)
         val scope = rememberCoroutineScope()
-        val model = remember(key1 = scope) { notesComponent().searchableNoteList(scope) }
+        val model = remember(key1 = scope) { notesComponent().noteListModel(scope) }
         when (destination) {
-            Destination.NoteList -> NoteListScreen(
+            is Destination.NoteList -> NoteListScreen(
                 model = model,
                 onNoteAdd = { note -> navigationModel.goTo(Destination.EditNote(note)) },
                 onNoteClick = { note -> navigationModel.goTo(Destination.ReadNote(note)) },

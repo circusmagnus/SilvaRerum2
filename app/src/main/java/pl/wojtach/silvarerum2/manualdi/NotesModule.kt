@@ -22,8 +22,4 @@ class NotesModule(private val appComponent: AppComponent) : NotesComponent {
     override fun noteListModel(scope: CoroutineScope): NoteListModelImpl {
         return NoteListModelImpl(scope, notesDao())
     }
-
-    override fun searchableNoteList(scope: CoroutineScope): SearchableListModel {
-        return SearchableListModel(noteListModel(scope))
-    }
 }

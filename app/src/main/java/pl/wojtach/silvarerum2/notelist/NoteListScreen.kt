@@ -14,10 +14,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import pl.wojtach.silvarerum2.NoteSnapshot
+import pl.wojtach.silvarerum2.notelist.SearchableListModel.Search
 import pl.wojtach.silvarerum2.utils.collectWhileStarted
 import pl.wojtach.silvarerum2.widgets.AddButton
 import pl.wojtach.silvarerum2.widgets.DeleteButton
@@ -29,13 +31,27 @@ import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
 fun NoteListScreen(
-    model: SearchableListModel,
+    model: NoteListModel,
+    search: Search,
     onNoteClick: (NoteSnapshot) -> Unit,
     onNoteAdd: (NoteSnapshot) -> Unit,
     onNoteEdit: (NoteSnapshot) -> Unit
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val state by model.searchedState.collectWhileStarted(lifecycleOwner = lifecycleOwner)
+    var searchPhrase by rememberSaveable {
+        mutableStateOf("")
+    }
+    var isSearchActive by rememberSaveable {
+        mutableStateOf(false)
+    }
+    val searchEngine = rememberSearch(
+        noteList = model.state,
+        initialState = Search(isSearchActive, searchPhrase)
+    )
+    val notes by searchEngine.searched.collectWhileStarted(
+        lifecycleOwner = lifecycleOwner,
+        initialValue = emptyList()
+    )
 
     val listCellFactory: @Composable (Modifier, NoteSnapshot) -> Unit = { modifier, note ->
         ShortNote(
@@ -47,14 +63,27 @@ fun NoteListScreen(
         )
     }
 
-    Log.d("lw", "NoteListScreen composed")
+    Log.d("lw", "NoteListScreen composed. Search phrase: $searchPhrase, searchActive = $isSearchActive, engine: $searchEngine, notes: $notes")
 
     NoteListLayout(
         topBar = {
             TopAppBar(title = {
                 NoteListHeader(
-                    searchedPhrase = state.searchState.phrase,
-                    onSearchedPhrase = { phrase -> model.searchFor(phrase) }
+                    isSearchActive = isSearchActive,
+                    SearchSection = {
+                        ExpandableSearch(
+                            isSearchActive = isSearchActive,
+                            onToggle = { active ->
+                                isSearchActive = active
+                                if (active) searchEngine.setActive() else searchEngine.disable()
+                            },
+                            searchPhrase = searchPhrase,
+                            onSearchedPhrase = { phrase ->
+                                searchPhrase = phrase
+                                searchEngine.searchFor(phrase)
+                            }
+                        )
+                    }
                 )
             }
             )
@@ -62,7 +91,7 @@ fun NoteListScreen(
         noteListUi = { paddingValues ->
             ReorderableList(
                 Modifier.padding(paddingValues),
-                reorderableItems = state.notes,
+                reorderableItems = notes,
                 ListCell = listCellFactory,
                 onReorder = { fromIndex, toIndex -> model.reorder(fromIndex, toIndex) }
             )
@@ -77,45 +106,33 @@ fun NoteListScreen(
 }
 
 @Composable
-fun NoteListLayout(topBar: @Composable () -> Unit, noteListUi: @Composable (PaddingValues) -> Unit, floatingButton: @Composable () -> Unit) {
+fun NoteListLayout(
+    topBar: @Composable () -> Unit,
+    noteListUi: @Composable (PaddingValues) -> Unit,
+    floatingButton: @Composable () -> Unit
+) {
 
     Log.d("lw", "NoteListLayout composed")
 
     Scaffold(
         topBar = topBar,
         floatingActionButton = floatingButton,
-        content = { paddingValues ->  noteListUi(paddingValues) }
+        content = { paddingValues -> noteListUi(paddingValues) }
     )
 }
 
 @Composable
 fun NoteListHeader(
-    searchedPhrase: String,
-    onSearchedPhrase: (String) -> Unit
+    isSearchActive: Boolean,
+    SearchSection: @Composable () -> Unit
 ) {
-    var localSearch by remember { mutableStateOf(searchedPhrase) }
-    var isSearchActive by remember { mutableStateOf(searchedPhrase.isNotEmpty()) }
 
     Row {
         if (!isSearchActive) {
             SilvaRerumHeader()
             Spacer(modifier = Modifier.weight(1f))
         }
-        ExpandableSearch(
-            isSearchActive,
-            onToggle = { isActive ->
-                if (!isActive) {
-                    localSearch = ""
-                    onSearchedPhrase("")
-                }
-                isSearchActive = isActive
-            },
-            searchPhrase = localSearch,
-            onSearchedPhrase = { phrase ->
-                localSearch = phrase
-                onSearchedPhrase(phrase)
-            }
-        )
+        SearchSection()
     }
 }
 

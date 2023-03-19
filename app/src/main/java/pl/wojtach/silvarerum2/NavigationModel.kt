@@ -2,19 +2,24 @@ package pl.wojtach.silvarerum2
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import pl.wojtach.silvarerum2.notelist.SearchableListModel
+import pl.wojtach.silvarerum2.notelist.SearchableListModel.Search
 
-class NavigationModel(initialDestination: Destination = Destination.NoteList, backstack: List<Destination> = emptyList()) {
+class NavigationModel(
+    initialDestination: Destination<Search> = Destination.NoteList(Search()),
+    backstack: List<Destination<Any>> = emptyList()
+) {
 
     private val _state = MutableStateFlow(initialDestination)
-    val state: StateFlow<Destination> get() = _state
+    val state: StateFlow<Destination<Any>> get() = _state
 
-    private val prevDestinations = ArrayDeque<Destination>(5).apply {
+    private val prevDestinations = ArrayDeque<Destination<Any>>(5).apply {
         for (element in backstack) this.addLast(element)
     }
 
-    val backStack: List<Destination> get() = prevDestinations.toList()
+    val backStack: List<Destination<Any>> get() = prevDestinations.toList()
 
-    fun goTo(destination: Destination) {
+    fun <T> goTo(destination: Destination<T>) {
         prevDestinations.addFirst(state.value)
         _state.tryEmit(destination)
     }
@@ -30,23 +35,28 @@ class NavigationModel(initialDestination: Destination = Destination.NoteList, ba
         }
 }
 
-sealed interface Destination {
+sealed interface Destination<T> {
     val name: String
 
-    object NoteList : Destination {
+    val dataModel: T
+
+    class NoteList(search: Search) : Destination<Search> {
         override val name: String = "NoteList"
+        override val dataModel: Search = search
     }
 
-    class ReadNote(val note: NoteSnapshot) : Destination {
+    class ReadNote(val note: NoteSnapshot) : Destination<Nothing> {
         override val name: String get() = destName
+        override val dataModel: Nothing = TODO()
 
         companion object {
             const val destName: String = "ReadNote"
         }
     }
 
-    class EditNote(val note: NoteSnapshot) : Destination {
+    class EditNote(val note: NoteSnapshot) : Destination<Nothing> {
         override val name: String get() = destName
+        override val dataModel: Nothing = TODO()
 
         companion object {
             const val destName: String = "EditNote"
