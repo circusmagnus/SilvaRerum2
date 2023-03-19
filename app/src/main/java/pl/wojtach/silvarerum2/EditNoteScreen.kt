@@ -22,7 +22,7 @@ import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 import pl.wojtach.silvarerum2.widgets.UndoButton
 
 @Composable
-internal fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
+fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
 
     Log.d("lw", "EditNoteScreen composed")
     val scope = rememberCoroutineScope()
@@ -43,7 +43,7 @@ internal fun EditNoteScreen(noteSnapshot: NoteSnapshot) {
 }
 
 @Composable
-internal fun EditNoteLayout(UndoButton: @Composable () -> Unit, EditNoteField: @Composable (PaddingValues) -> Unit) {
+fun EditNoteLayout(UndoButton: @Composable () -> Unit, EditNoteField: @Composable (PaddingValues) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(title = {

@@ -23,7 +23,7 @@ import pl.wojtach.silvarerum2.widgets.EditNoteButton
 import pl.wojtach.silvarerum2.widgets.SilvaRerumHeader
 
 @Composable
-internal fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, onDeletion: () -> Unit) {
+fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) -> Unit, onDeletion: () -> Unit) {
     val scope = rememberCoroutineScope()
     val model = remember(key1 = scope) { notesComponent().readNoteModel(scope, note) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -37,7 +37,7 @@ internal fun ReadOnlyNoteScreen(note: NoteSnapshot, toEditing: (NoteSnapshot) ->
 }
 
 @Composable
-internal fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButton: @Composable () -> Unit) {
+fun ReadOnlyNote(content: String, EditButton: @Composable () -> Unit, DeleteButton: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(title = {

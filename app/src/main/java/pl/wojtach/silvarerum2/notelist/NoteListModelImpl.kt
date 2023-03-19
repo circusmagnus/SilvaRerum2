@@ -13,7 +13,7 @@ import pl.wojtach.silvarerum2.room.NotesDao
 import pl.wojtach.silvarerum2.room.toRoomEntity
 import java.util.UUID
 
-internal class NoteListModelImpl(scope: CoroutineScope, private val notesDao: NotesDao) : CoroutineScope by scope, NoteListModel {
+class NoteListModelImpl(scope: CoroutineScope, private val notesDao: NotesDao) : CoroutineScope by scope, NoteListModel {
 
     override val state: StateFlow<List<NoteSnapshot>> = notesDao
         .getAll()
