@@ -1,9 +1,8 @@
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-//    id ("com.google.devtools.ksp") version "$1.6.10-1.0.2"
-    kotlin("kapt")
     id("kotlin-parcelize")
+    id("com.google.devtools.ksp")
 }
 
 val composeCompiler = "1.4.3"
@@ -53,7 +52,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = composeCompiler
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
@@ -67,7 +66,7 @@ dependencies {
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    implementation ("androidx.core:core-ktx:1.9.0")
+    implementation ("androidx.core:core-ktx:1.12.0")
 
     implementation("androidx.compose.material3:material3")
 
@@ -79,15 +78,15 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation ("androidx.activity:activity-compose:1.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation ("androidx.activity:activity-compose:1.8.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
     implementation ("androidx.compose.material:material-icons-extended")
 
-    val roomVersion = "2.4.3"
+    val roomVersion = "2.5.2"
     implementation ("androidx.room:room-runtime:$roomVersion")
     annotationProcessor ("androidx.room:room-compiler:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 //    ksp ("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$roomVersion")
 
